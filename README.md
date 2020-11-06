@@ -1,4 +1,4 @@
 # MathInv-2021
-Repo for MathInv /w Camto
+Repo for MathInv /w [Camto](https://github.com/Camto)
 
-## Computational Analysis of Differential Equations using Types and Numerical Algorithms
+## Applying-Differential-Equations-into-Computing-using-Types-and-integrating-a-programming-language-in
