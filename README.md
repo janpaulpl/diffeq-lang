@@ -20,18 +20,16 @@ Repo for MathInv /w [Camto](https://github.com/Camto)
 
 #### What we'll do with each of these "DE Types"
 
-* Do this
-* Then do this
-* Oh my god we are doing this
+- a
 
 ### Arteries and Veins: Syntax, features, and semantics.
-* Blah Blah Blah Blah
+- Blah Blah Blah Blah
 
 ### Meat: Implementation of a GUI with all previously established features.
-* Blah Blah Blah Blah Blah
+- Blah Blah Blah Blah Blah
 
 ### Skin and Makeup: Polishing GUI and any remaining features/tweaks.
-* Blah Blah Blah Blah Blah Blah
+- Blah Blah Blah Blah Blah Blah
 
 ### Raising the child: Updates and upkeep until we don't need this anymore.
-* Blah Blah Blah Blah Blah Blah Blah
+- Blah Blah Blah Blah Blah Blah Blah
