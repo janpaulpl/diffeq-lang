@@ -8,9 +8,9 @@
 
 <br>
 
-<div align="center">
+### <u>Ordinary Differential Equations:</u>
 
-## <u>Ordinary Differential Equations:</u>
+<div align="center">
 
 |           *Type*            |                                                     *Differential Equation*                                                     |                                                                                                                                                                  *Solution Method*                                                                                                                                                                  |
 | :-------------------------: | :-----------------------------------------------------------------------------------------------------------------------------: | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: |
@@ -19,10 +19,15 @@
 |  **General second-order**   |                                                          Second-order                                                           |                                     Multiply both sides of equation by 2dy/dx, substitute <!-- $\displaystyle 2{\frac {dy}{dx}}{\frac {d^{2}y}{dx^{2}}}={\frac {d}{dx}}\left({\frac {dy}{dx}}\right)^{2}\,\!$ --> <img style="transform: translateY(0.25em);" src="svg\mZFGws6tNO.svg"/>, then integrate twice                                      |
 | **Linear to the nth order** | Second-order; linear; inhomogeneous; constant coefficients *?* <br> nth-order; linear; inhomogeneous; constant coefficients *?* |                             Complementary function y_c: assume y_c = e^αx, substitute and solve polynomial in α, to find the linearly independent functions <!-- ${\displaystyle e^{\alpha _{j}x}}e^{\alpha _{j}x}$ --> <img style="transform: translateY(0.25em);" src="svg\oIEmtTQuDH.svg"/>. <br> Same as previous.                              |
 
+</div>
+
 </br>
 
-## <u>What we'll do with each of these "DE Types"</u>
-</div>
+### <u>What we'll do with each of these "DE Types"</u>
+
+* Do this
+* Then do this
+* Oh my god we are doing this
 
 ## Arteries and Veins: Syntax, features, and semantics.
 * Blah Blah Blah Blah
