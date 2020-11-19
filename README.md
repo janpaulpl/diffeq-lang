@@ -3,7 +3,7 @@ Repo for MathInv /w [Camto](https://github.com/Camto)
 
 ## Workflow
 
-### Skeleton: We love math; Declaration of differential equations and how many data types we need.
+### Skeleton: We love math; Declaration of differential equations and how we will use/integrate them.
 
 > *Disclaimer*: Those marked with a *?* are too sketch to be done (aka partial differentiation too complex to complete).
 >
