@@ -1,6 +1,9 @@
 # MathInv-2021: Applying DEs into Computing using Types and integrating a programming language interface
 Repo for MathInv /w [Camto](https://github.com/Camto)
 
+## About
+Fancy website lets you go wooooo with differentials.
+
 ## Workflow
 
 ### Skeleton: We love math; Declaration of differential equations and how we will use/integrate them.
@@ -18,12 +21,13 @@ Repo for MathInv /w [Camto](https://github.com/Camto)
 |  **General second-order**   |                                                          Second-order                                                           |                                     Multiply both sides of equation by 2dy/dx, substitute <!-- $\displaystyle 2{\frac {dy}{dx}}{\frac {d^{2}y}{dx^{2}}}={\frac {d}{dx}}\left({\frac {dy}{dx}}\right)^{2}\,\!$ --> <img style="transform: translateY(0.25em);" src="svg\mZFGws6tNO.svg"/>, then integrate twice                                      |
 | **Linear to the nth order** | Second-order; linear; inhomogeneous; constant coefficients *?* <br> nth-order; linear; inhomogeneous; constant coefficients *?* |                             Complementary function y_c: assume y_c = e^αx, substitute and solve polynomial in α, to find the linearly independent functions <!-- ${\displaystyle e^{\alpha _{j}x}}e^{\alpha _{j}x}$ --> <img style="transform: translateY(0.25em);" src="svg\oIEmtTQuDH.svg"/>. <br> Same as previous.                              |
 
-#### What we'll do with each of these "DE Types"
-
-- a
-
 ### Arteries and Veins: Syntax, features, and semantics.
-- Blah Blah Blah Blah
+
+- Have a convenient syntax to input
+  - That means deciding what subset of maths is allowed
+- Be able to auto-derive/integrate
+- Graph and display them
+  - Possibly make the graph interactive, a la Mathematica
 
 ### Meat: Implementation of a GUI with all previously established features.
 - Blah Blah Blah Blah Blah
