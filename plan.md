@@ -7,7 +7,7 @@
 
 | *Type*      | *Differential Equation* | *Solution Method* |
 |    :----:   |    :----:   |    :----:     |
-| **Separable**      | First-order (separable in x and y (general case, see below for special cases))       | Here's this   |
+| **Separable**      | [A]        | Here's this   |
 | **General first-order**   | Text        | And more      |
 | **General second-order**   | Text        | And more      |
 | **Linear to the nth order**   | Text        | And more      |
