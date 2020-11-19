@@ -1,8 +1,12 @@
 # Workflow
 
-##### Those marked with a *?* are too sketch to be done (aka partial differentiation too complex to complete).
-
 ## Skeleton: We love math; Declaration of differential equations and how many data types we need.
+
+> *Disclaimer*: Those marked with a *?* are too sketch to be done (aka partial differentiation too complex to complete).
+>
+> *Disclaimer*: There is an entire thing called "The guessing method" which consists of making the code guess the solution, and that would be way too complicated and would probably require an AI, so this method will not be taken into consideration.
+
+<br>
 
 <div align="center">
 
@@ -15,11 +19,7 @@
 |  **General second-order**   |                                                          Second-order                                                           |                                     Multiply both sides of equation by 2dy/dx, substitute <!-- $\displaystyle 2{\frac {dy}{dx}}{\frac {d^{2}y}{dx^{2}}}={\frac {d}{dx}}\left({\frac {dy}{dx}}\right)^{2}\,\!$ --> <img style="transform: translateY(0.25em);" src="svg\mZFGws6tNO.svg"/>, then integrate twice                                      |
 | **Linear to the nth order** | Second-order; linear; inhomogeneous; constant coefficients *?* <br> nth-order; linear; inhomogeneous; constant coefficients *?* |                             Complementary function y_c: assume y_c = e^αx, substitute and solve polynomial in α, to find the linearly independent functions <!-- ${\displaystyle e^{\alpha _{j}x}}e^{\alpha _{j}x}$ --> <img style="transform: translateY(0.25em);" src="svg\oIEmtTQuDH.svg"/>. <br> Same as previous.                              |
 
-</div>
-
-#### *Disclaimer*: There is an entire thing called "The guessing method" which consists of making the code guess the solution, and that would be way too complicated and would probably require an AI, so this method will not be taken into consideration.
-
-<div align="center"> 
+</br>
 
 ## <u>What we'll do with each of these "DE Types"</u>
 </div>
