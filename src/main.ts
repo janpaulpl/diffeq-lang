@@ -1,7 +1,10 @@
-import exa = require("./exa");
+// import exa = require("./exa");
 
-function bruh(): void {
-	console.log("bruh", exa.a);
+
+function run(prog: string) {
+	return JSON.parse(prog);
 }
 
-module.exports = {bruh};
+let format = JSON.stringify;
+
+module.exports = {run, format};
