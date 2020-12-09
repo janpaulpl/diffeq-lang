@@ -44,6 +44,8 @@ map 'inc [1 2 3]
 map inc [1 2 3]
 
 + {x + 1} {x^2}
+
+[key: "value" a: 4]
 ```
 
 ### Meat: Implementation of a GUI with all previously established features.
