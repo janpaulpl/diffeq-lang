@@ -1,10 +1,9 @@
-// import exa = require("./exa");
-
+import parser = require("./parser");
 
 function run(prog: string) {
-	return JSON.parse(prog);
+	return parser.parse(prog);
 }
 
 let format = JSON.stringify;
 
-module.exports = {run, format};
+export = {run, format};
