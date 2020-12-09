@@ -38,7 +38,7 @@ call
 print + 1 1  4
 
 + 1 1
-print $$ 4
+print ?? 4
 
 map 'inc [1 2 3]
 map inc [1 2 3]
@@ -46,6 +46,8 @@ map inc [1 2 3]
 + {x + 1} {x^2}
 
 [key: "value" a: 4]
+
+print "bruh" print 1
 ```
 
 ### Meat: Implementation of a GUI with all previously established features.
