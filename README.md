@@ -29,6 +29,23 @@ Fancy website lets you go wooooo with differentials.
 - Graph and display them
   - Possibly make the graph interactive, a la Mathematica
 
+#### Syntax
+
+Polish Notation
+
+```
+call
+print + 1 1  4
+
++ 1 1
+print $$ 4
+
+map 'inc [1 2 3]
+map inc [1 2 3]
+
++ {x + 1} {x^2}
+```
+
 ### Meat: Implementation of a GUI with all previously established features.
 - Blah Blah Blah Blah Blah
 
