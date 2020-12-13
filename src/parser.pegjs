@@ -35,24 +35,25 @@ Instr
 	/ Ls
 	/ Num
 	/ Str
+	/ Expr
 	/ Cmmnt
 
 Keywd = If / For / Var / Fun
 
-If = "if" _ cond:Block _ ":" _ if_branch:Block _ elif_branches:("elif" _ Block _ ":" _ Block)* _ else_branch:("else" _ Block)? "end"
+If = "if" _ cond:Block _ ":" _ if_branch:Block _ elif_branches:("elif" _ Block _ ":" _ Block)* _ else_branch:("else" _ Block)? "end"?
 	{return {type: type("if"), branches: [
 		{cond, body: if_branch},
 		...elif_branches.map(branch => ({cond: branch[2], body: branch[6]})),
 		...(else_branch ? [{cond: false, body: else_branch[2]}] : [])
 	]}}
 
-For = "for" _ var_:Name _ iter:Block _ ":" _ body:Block "end"
-	{return {type: type("for"), iter, var: var_.data, body}}
+For = "for" _ var_:Name _ iter:Block _ ":" _ body:Block "end"?
+	{return {type: type("for"), var: var_.data, iter, body}}
 
-Var = "=" _ var_:Name deriv:"'"* _ def:Instrs _ ";"
+Var = "=" _ var_:Name deriv:"'"* _ def:Instrs _ ";"?
 	{return {type: type("var"), var: var_.data, def, deriv_n: deriv.length}}
 
-Fun = "fun" _ fun:Name _ args:(Name _)* ":" _ body:Block _ "end"
+Fun = "fun" _ fun:Name _ args:(Name _)* ":" _ body:Block _ "end"?
 	{return {type: type("fun"), fun: fun.data, args: args.map(arg => arg[0].data), body}}
 
 Op
@@ -94,6 +95,8 @@ Str = '"' ([^"\\] / ("\\" .))* '"' {return {
 	type: type("str"),
 	data: text().slice(1, -1).replace("\\n", "\n").replace(/\\(.)/g, "$1")}
 }
+
+Expr = "{" "}"
 
 Cmmnt = "#(" [^)]* ")" {return {type: type("cmmnt"), cmmnt: text().slice(2, -1)}}
 
