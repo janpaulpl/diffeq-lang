@@ -60,8 +60,8 @@ end
 
 for x [2 3]: print x end
 
-= x 3;
-= y'' [2 3 4];
+x = 3;
+y'' = [2 3 4];
 
 fun fib n a b: if == n 0: a else fib  - n 1  b  + a b end end
 
