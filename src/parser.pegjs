@@ -50,7 +50,7 @@ If = "if" _ cond:Block _ ":" _ if_branch:Block _ elif_branches:("elif" _ Block _
 For = "for" _ var_:Name _ iter:Block _ ":" _ body:Block "end"?
 	{return {type: type("for"), var: var_.data, iter, body}}
 
-Var = "=" _ var_:Name deriv:"'"* _ def:Instrs _ ";"?
+Var = var_:Name deriv:"'"* _ "=" _ def:Instrs _ ";"?
 	{return {type: type("var"), var: var_.data, def, deriv_n: deriv.length}}
 
 Fun = "fun" _ fun:Name _ args:(Name _)* ":" _ body:Block _ "end"?
