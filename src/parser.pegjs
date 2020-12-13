@@ -1,7 +1,8 @@
 {
 	let types = [
-		"op", "name", "ref", "obj", "prop", "ls", "num", "str",
-		"if", "for", "var", "fun"
+		"op", "name", "ref", "obj", "prop", "ls", "num", "str", // Basic
+		"if", "for", "var", "fun", // Structures
+		"cmmnt"
 	];
 	
 	function type(name) {
@@ -9,16 +10,16 @@
 	}
 	
 	let ops = [
-		"==", "/=", "<=", ">=", "<", ">",
-		"+", "~", "-", "*", "/",
-		"^", "%%", "%",
-		"!!",
-		"&", "|", "!",
-		"??"
+		"==", "/=", "<=", ">=", "<", ">", // Comparison
+		"+", "~", "-", "*", "/", // Arithmetic
+		"^", "%%", "%", "'", // Extra math
+		"@", // List indexing
+		"&", "|", "!", // Boolean
+		"??" // Special interaction
 	];
 }
 
-Block = _ instr_chunks:(Instrs _ ("," _ Instrs _)*)
+Block = _ instr_chunks:(Instrs _ (";" _ Instrs _)*)
 	{return [instr_chunks[0], ...instr_chunks[2].map(instr => instr[2])]}
 
 Instrs = _ instrs:(Instr _)*
@@ -34,27 +35,32 @@ Instr
 	/ Ls
 	/ Num
 	/ Str
+	/ Cmmnt
 
 Keywd = If / For / Var / Fun
 
-If = "if" _ cond:Block _ ":" _ if_branch:Block _ ";" _ else_branch:Block ";"
-	{return {type: type("if"), cond, if_branch, else_branch}}
+If = "if" _ cond:Block _ ":" _ if_branch:Block _ elif_branches:("elif" _ Block _ ":" _ Block)* _ else_branch:("else" _ Block)? "end"
+	{return {type: type("if"), branches: [
+		{cond, body: if_branch},
+		...elif_branches.map(branch => ({cond: branch[2], body: branch[6]})),
+		...(else_branch ? [{cond: false, body: else_branch[2]}] : [])
+	]}}
 
-For = "for" _ iter:Block _ ":" _ var_:Name _ body:Block ";"
+For = "for" _ var_:Name _ iter:Block _ ":" _ body:Block "end"
 	{return {type: type("for"), iter, var: var_.data, body}}
 
-Var = "var" _ var_:Name _ "=" _ def:Block _ ";"
-	{return {type: type("var"), var: var_.data, def}}
+Var = "=" _ var_:Name deriv:"'"* _ def:Instrs _ ";"
+	{return {type: type("var"), var: var_.data, def, deriv_n: deriv.length}}
 
-Fun = "fun" _ fun:Name _ args:(Name _)* ":" _ body:Block _ ";"
+Fun = "fun" _ fun:Name _ args:(Name _)* ":" _ body:Block _ "end"
 	{return {type: type("fun"), fun: fun.data, args: args.map(arg => arg[0].data), body}}
 
 Op
 	= (
 		"==" / "/=" / "<=" / ">=" / "<" / ">" /
 		"+" / "~" / "-" / "*" / "/" /
-		"^" / "%%" / "%" /
-		"!!" /
+		"^" / "%%" / "%" / "'" /
+		"@" /
 		"&" / "|" / "!")
 		{return {type: type("op"), data: ops.indexOf(text())}}
 	/ "??"
@@ -62,10 +68,10 @@ Op
 	/ "?" num:Num
 		{return {type: type("op"), data: ops.indexOf("??"), num: num.data}}
 
-Name = [A-Za-z_][A-Za-z0-9_]*
+Name = ! ("if"/"else"/"elif"/"end"/"for"/"var"/"fun") [A-Za-z_][A-Za-z0-9_]*
 	{return {type: type("name"), data: text()}}
 
-Ref = "'" ref:Name
+Ref = "`" ref:Name
 	{return {type: type("ref"), data: ref.data}}
 
 Obj = "[" _ pairs:(":" Name Block)* "]" {return {
@@ -88,5 +94,7 @@ Str = '"' ([^"\\] / ("\\" .))* '"' {return {
 	type: type("str"),
 	data: text().slice(1, -1).replace("\\n", "\n").replace(/\\(.)/g, "$1")}
 }
+
+Cmmnt = "#(" [^)]* ")" {return {type: type("cmmnt"), cmmnt: text().slice(2, -1)}}
 
 _ = [ \t\n\r]*
