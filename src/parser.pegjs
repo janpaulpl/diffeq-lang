@@ -121,10 +121,10 @@ Math_Call
 
 Math_Func_1 = (
 	"abs" / "sqrt" / "cbrt" / "ln" /
-	"cos" / "sin" / "tan" / "cot" / "sec" / "csc" /
 	"cosh" / "sinh" / "tanh" / "coth" / "sech" / "csch" /
-	"arccos" / "arcsin" / "arctan" / "arccot" / "arcsec" / "arccsc" /
-	"arccosh" / "arcsinh" / "arctanh" / "arccoth" / "arcsech" / "arccsch")
+	"cos" / "sin" / "tan" / "cot" / "sec" / "csc" /
+	"arccosh" / "arcsinh" / "arctanh" / "arccoth" / "arcsech" / "arccsch" /
+	"arccos" / "arcsin" / "arctan" / "arccot" / "arcsec" / "arccsc")
 Math_Func_2 = "root" / "log"
 Math_Func_3 = "sum" / "prod"
 
