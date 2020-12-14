@@ -96,7 +96,39 @@ Str = '"' ([^"\\] / ("\\" .))* '"' {return {
 	data: text().slice(1, -1).replace("\\n", "\n").replace(/\\(.)/g, "$1")}
 }
 
-Expr = "{" "}"
+Expr = "{" _ Eq _ "}"
+
+Eq = Math_Expr (_ "=" _ Math_Expr)? _
+
+Math_Expr = Terms (_ [+\-] _ Terms)* _
+
+Terms = Prods (_ [*/]? _ Prods)* _
+
+Prods = Final (_ "^" _ Final)* _
+
+Final
+	= "(" _ Math_Expr _ ")"
+	/ Math_Call
+	/ Math_Const
+	/ "x" / "y"
+	/ [a-wz]
+	/ Num
+
+Math_Call
+	= Math_Func_1 _ "(" _ Math_Expr _ ")"
+	/ Math_Func_2 _ "(" _ Math_Expr _ "," _ Math_Expr _ ")"
+	/ Math_Func_3 _ "(" _ Math_Expr _ "," _ Math_Expr _ "," _ Math_Expr _ ")"
+
+Math_Func_1 = (
+	"abs" / "sqrt" / "cbrt" / "ln" /
+	"cos" / "sin" / "tan" / "cot" / "sec" / "csc" /
+	"cosh" / "sinh" / "tanh" / "coth" / "sech" / "csch" /
+	"arccos" / "arcsin" / "arctan" / "arccot" / "arcsec" / "arccsc" /
+	"arccosh" / "arcsinh" / "arctanh" / "arccoth" / "arcsech" / "arccsch")
+Math_Func_2 = "root" / "log"
+Math_Func_3 = "sum" / "prod"
+
+Math_Const = "pi" / "π" / "tau" / "τ" / "e"
 
 Cmmnt = "#(" [^)]* ")" {return {type: type("cmmnt"), cmmnt: text().slice(2, -1)}}
 
