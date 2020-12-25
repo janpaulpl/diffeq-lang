@@ -1,7 +1,7 @@
 {
 	let types = [
 		"op", "name", "ref", "obj", "prop", "ls", "num", "str", // Basic
-		"if", "for", "var", "fun", // Structures
+		"if", "for", "while", "var", "fun", // Structures
 		"cmmnt"
 	];
 	
@@ -38,7 +38,7 @@ Instr
 	/ Expr
 	/ Cmmnt
 
-Keywd = If / For / Var / Fun
+Keywd = If / For / While / Var / Fun
 
 If = "if" _ cond:Block _ ":" _ if_branch:Block _ elif_branches:("elif" _ Block _ ":" _ Block)* _ else_branch:("else" _ Block)? "end"?
 	{return {type: type("if"), branches: [
@@ -49,6 +49,9 @@ If = "if" _ cond:Block _ ":" _ if_branch:Block _ elif_branches:("elif" _ Block _
 
 For = "for" _ var_:Name _ iter:Block _ ":" _ body:Block "end"?
 	{return {type: type("for"), var: var_.data, iter, body}}
+
+While = "while" _ cond:Block _ ":" _ body:Block "end"?
+	{return {type: type("while"), cond, body}}
 
 Var = var_:Name deriv:"'"* _ "=" _ def:Instrs _ ";"?
 	{return {type: type("var"), var: var_.data, def, deriv_n: deriv.length}}
@@ -69,7 +72,7 @@ Op
 	/ "?" num:Num
 		{return {type: type("op"), data: ops.indexOf("??"), num: num.data}}
 
-Name = ! ("if"/"else"/"elif"/"end"/"for"/"var"/"fun") [A-Za-z_][A-Za-z0-9_]*
+Name = ! ("if"/"else"/"elif"/"end"/"for"/"while"/"var"/"fun") [A-Za-z_][A-Za-z0-9_]*
 	{return {type: type("name"), data: text()}}
 
 Ref = "`" ref:Name
