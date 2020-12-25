@@ -12,3 +12,5 @@ enum Op {
 	"&", "|", "!", // Boolean
 	"??" // Special interaction
 }
+
+export = {Node_Type, Op};
