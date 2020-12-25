@@ -23,7 +23,7 @@ If = "if" _ cond:Block _ ":" _ if_branch:Block _ elif_branches:("elif" _ Block _
 	{return {type: types.Node_Type.if, branches: [
 		{cond, body: if_branch},
 		...elif_branches.map(branch => ({cond: branch[2], body: branch[6]})),
-		...(else_branch ? [{cond: false, body: else_branch[2]}] : [])
+		...(else_branch ? [{cond: null, body: else_branch[2]}] : [])
 	]}}
 
 For = "for" _ var_:Name _ iter:Block _ ":" _ body:Block "end"?
@@ -60,7 +60,7 @@ Ref = "`" ref:Name
 Obj = "[" _ pairs:(":" Name Block)* "]" {return {
 	type: types.Node_Type.obj,
 	data: pairs.map(
-		pair => {return {key: pair[1].name, value: pair[2]}}
+		pair => {return {key: pair[1].data, value: pair[2]}}
 	)
 }}
 
