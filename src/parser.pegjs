@@ -1,22 +1,18 @@
 {
-	let types = [
-		"op", "name", "ref", "obj", "prop", "ls", "num", "str", // Basic
-		"if", "for", "while", "var", "fun", // Structures
-		"cmmnt"
-	];
-	
-	function type(name) {
-		return types.indexOf(name);
+	enum Node_Type {
+		op, name, ref, obj, prop, ls, num, str, // Basic
+		if, for, while, var, fun, // Structures
+		cmmnt
 	}
 	
-	let ops = [
+	enum Op {
 		"==", "/=", "<=", ">=", "<", ">", // Comparison
 		"+", "~", "-", "*", "/", // Arithmetic
 		"^", "%%", "%", "'", // Extra math
 		"@", // List indexing
 		"&", "|", "!", // Boolean
 		"??" // Special interaction
-	];
+	}
 }
 
 Block = _ instr_chunks:(Instrs _ (";" _ Instrs _)*)
@@ -41,23 +37,23 @@ Instr
 Keywd = If / For / While / Var / Fun
 
 If = "if" _ cond:Block _ ":" _ if_branch:Block _ elif_branches:("elif" _ Block _ ":" _ Block)* _ else_branch:("else" _ Block)? "end"?
-	{return {type: type("if"), branches: [
+	{return {type: Node_Type.if, branches: [
 		{cond, body: if_branch},
 		...elif_branches.map(branch => ({cond: branch[2], body: branch[6]})),
 		...(else_branch ? [{cond: false, body: else_branch[2]}] : [])
 	]}}
 
 For = "for" _ var_:Name _ iter:Block _ ":" _ body:Block "end"?
-	{return {type: type("for"), var: var_.data, iter, body}}
+	{return {type: Node_Type.for, var: var_.data, iter, body}}
 
 While = "while" _ cond:Block _ ":" _ body:Block "end"?
-	{return {type: type("while"), cond, body}}
+	{return {type: Node_Type.while, cond, body}}
 
 Var = var_:Name deriv:"'"* _ "=" _ def:Instrs _ ";"?
-	{return {type: type("var"), var: var_.data, def, deriv_n: deriv.length}}
+	{return {type: Node_Type.var, var: var_.data, def, deriv_n: deriv.length}}
 
 Fun = "fun" _ fun:Name _ args:(Name _)* ":" _ body:Block _ "end"?
-	{return {type: type("fun"), fun: fun.data, args: args.map(arg => arg[0].data), body}}
+	{return {type: Node_Type.fun, fun: fun.data, args: args.map(arg => arg[0].data), body}}
 
 Op
 	= (
@@ -66,36 +62,36 @@ Op
 		"^" / "%%" / "%" / "'" /
 		"@" /
 		"&" / "|" / "!")
-		{return {type: type("op"), data: ops.indexOf(text())}}
+		{return {type: Node_Type.op, data: Op[text()]}}
 	/ "??"
-		{return {type: type("op"), data: ops.indexOf("??"), num: 0}}
+		{return {type: Node_Type.op, data: Op["??"], num: 0}}
 	/ "?" num:Num
-		{return {type: type("op"), data: ops.indexOf("??"), num: num.data}}
+		{return {type: Node_Type.op, data: Op["??"], num: num.data}}
 
 Name = ! ("if"/"else"/"elif"/"end"/"for"/"while"/"var"/"fun") [A-Za-z_][A-Za-z0-9_]*
-	{return {type: type("name"), data: text()}}
+	{return {type: Node_Type.name, data: text()}}
 
 Ref = "`" ref:Name
-	{return {type: type("ref"), data: ref.data}}
+	{return {type: Node_Type.ref, data: ref.data}}
 
 Obj = "[" _ pairs:(":" Name Block)* "]" {return {
-	type: type("obj"),
+	type: Node_Type.obj,
 	data: pairs.map(
 		pair => {return {key: pair[1].name, value: pair[2]}}
 	)
 }}
 
 Prop = "." prop:Name
-	{return {type: type("prop"), data: prop.data}}
+	{return {type: Node_Type.prop, data: prop.data}}
 
 Ls = "[" instrs:Block "]"
-	{return {type: type("ls"), data: instrs}}
+	{return {type: Node_Type.ls, data: instrs}}
 
 Num = [0-9]+ ("." [0-9]+)?
-	{return {type: type("num"), data: parseFloat(text())}}
+	{return {type: Node_Type.num, data: parseFloat(text())}}
 
 Str = '"' ([^"\\] / ("\\" .))* '"' {return {
-	type: type("str"),
+	type: Node_Type.str,
 	data: text().slice(1, -1).replace("\\n", "\n").replace(/\\(.)/g, "$1")}
 }
 
@@ -133,6 +129,6 @@ Math_Func_3 = "sum" / "prod"
 
 Math_Const = "pi" / "π" / "tau" / "τ" / "e"
 
-Cmmnt = "#(" [^)]* ")" {return {type: type("cmmnt"), cmmnt: text().slice(2, -1)}}
+Cmmnt = "#(" [^)]* ")" {return {type: Node_Type.cmmnt, cmmnt: text().slice(2, -1)}}
 
 _ = [ \t\n\r]*
