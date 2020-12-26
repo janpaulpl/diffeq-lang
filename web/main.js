@@ -1,13 +1,35 @@
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.main = f()}})(function(){var define,module,exports;return (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
 "use strict";
-var parser = require("./parser");
-function run(prog) {
-    return parser.parse(prog);
+exports.__esModule = true;
+exports.compile = void 0;
+var types = require("./types");
+function compile(ast) {
+    var compiled = ast.map(function (instrs) { return instrs.map(function (instr) {
+        switch (instr.type) {
+            case types.Instr_Type.op:
+                return types.Op[instr.data];
+            default:
+                return "NOT OP";
+        }
+    }); });
+    return compiled.map(function (comp_instrs) { return comp_instrs.join(";\n"); }).join(";\n") + ";";
 }
-var format = function (s) { return JSON.stringify(s, null, 2); };
-module.exports = { run: run, format: format };
+exports.compile = compile;
 
-},{"./parser":2}],2:[function(require,module,exports){
+},{"./types":4}],2:[function(require,module,exports){
+"use strict";
+exports.__esModule = true;
+exports.format = exports.run = void 0;
+var parser = require("./parser");
+var compiler = require("./compiler");
+function run(prog) {
+    return compiler.compile(parser.parse(prog));
+}
+exports.run = run;
+var format = function (s) { return s; };
+exports.format = format;
+
+},{"./compiler":1,"./parser":3}],3:[function(require,module,exports){
 "use strict";
 var __spreadArrays = (this && this.__spreadArrays) || function () {
     for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
@@ -127,20 +149,20 @@ peg$SyntaxError.buildMessage = function (expected, found) {
 function peg$parse(input, options) {
     options = options !== void 0 ? options : {};
     var peg$FAILED = {}, peg$startRuleFunctions = { Block: peg$parseBlock }, peg$startRuleFunction = peg$parseBlock, peg$c0 = ";", peg$c1 = peg$literalExpectation(";", false), peg$c2 = function (instr_chunks) { return __spreadArrays([instr_chunks[0]], instr_chunks[2].map(function (instr) { return instr[2]; })); }, peg$c3 = function (instrs) { return instrs.map(function (instr) { return instr[0]; }); }, peg$c4 = "if", peg$c5 = peg$literalExpectation("if", false), peg$c6 = ":", peg$c7 = peg$literalExpectation(":", false), peg$c8 = "elif", peg$c9 = peg$literalExpectation("elif", false), peg$c10 = "else", peg$c11 = peg$literalExpectation("else", false), peg$c12 = "end", peg$c13 = peg$literalExpectation("end", false), peg$c14 = function (cond, if_branch, elif_branches, else_branch) {
-        return { type: types.Node_Type["if"], branches: __spreadArrays([
+        return { type: types.Instr_Type["if"], branches: __spreadArrays([
                 { cond: cond, body: if_branch }
             ], elif_branches.map(function (branch) { return ({ cond: branch[2], body: branch[6] }); }), (else_branch ? [{ cond: null, body: else_branch[2] }] : [])) };
-    }, peg$c15 = "for", peg$c16 = peg$literalExpectation("for", false), peg$c17 = function (var_, iter, body) { return { type: types.Node_Type["for"], "var": var_.data, iter: iter, body: body }; }, peg$c18 = "while", peg$c19 = peg$literalExpectation("while", false), peg$c20 = function (cond, body) { return { type: types.Node_Type["while"], cond: cond, body: body }; }, peg$c21 = "'", peg$c22 = peg$literalExpectation("'", false), peg$c23 = "=", peg$c24 = peg$literalExpectation("=", false), peg$c25 = function (var_, deriv, def) { return { type: types.Node_Type["var"], "var": var_.data, def: def, deriv_n: deriv.length }; }, peg$c26 = "fun", peg$c27 = peg$literalExpectation("fun", false), peg$c28 = function (fun, args, body) { return { type: types.Node_Type.fun, fun: fun.data, args: args.map(function (arg) { return arg[0].data; }), body: body }; }, peg$c29 = "==", peg$c30 = peg$literalExpectation("==", false), peg$c31 = "/=", peg$c32 = peg$literalExpectation("/=", false), peg$c33 = "<=", peg$c34 = peg$literalExpectation("<=", false), peg$c35 = ">=", peg$c36 = peg$literalExpectation(">=", false), peg$c37 = "<", peg$c38 = peg$literalExpectation("<", false), peg$c39 = ">", peg$c40 = peg$literalExpectation(">", false), peg$c41 = "+", peg$c42 = peg$literalExpectation("+", false), peg$c43 = "~", peg$c44 = peg$literalExpectation("~", false), peg$c45 = "-", peg$c46 = peg$literalExpectation("-", false), peg$c47 = "*", peg$c48 = peg$literalExpectation("*", false), peg$c49 = "/", peg$c50 = peg$literalExpectation("/", false), peg$c51 = "^", peg$c52 = peg$literalExpectation("^", false), peg$c53 = "%%", peg$c54 = peg$literalExpectation("%%", false), peg$c55 = "%", peg$c56 = peg$literalExpectation("%", false), peg$c57 = "@", peg$c58 = peg$literalExpectation("@", false), peg$c59 = "&", peg$c60 = peg$literalExpectation("&", false), peg$c61 = "|", peg$c62 = peg$literalExpectation("|", false), peg$c63 = "!", peg$c64 = peg$literalExpectation("!", false), peg$c65 = function () { return { type: types.Node_Type.op, data: types.Op[text()] }; }, peg$c66 = "??", peg$c67 = peg$literalExpectation("??", false), peg$c68 = function () { return { type: types.Node_Type.op, data: types.Op["??"], num: 0 }; }, peg$c69 = "?", peg$c70 = peg$literalExpectation("?", false), peg$c71 = function (num) { return { type: types.Node_Type.op, data: types.Op["??"], num: num.data }; }, peg$c72 = "var", peg$c73 = peg$literalExpectation("var", false), peg$c74 = /^[A-Za-z_]/, peg$c75 = peg$classExpectation([["A", "Z"], ["a", "z"], "_"], false, false), peg$c76 = /^[A-Za-z0-9_]/, peg$c77 = peg$classExpectation([["A", "Z"], ["a", "z"], ["0", "9"], "_"], false, false), peg$c78 = function () { return { type: types.Node_Type.name, data: text() }; }, peg$c79 = "`", peg$c80 = peg$literalExpectation("`", false), peg$c81 = function (ref) { return { type: types.Node_Type.ref, data: ref.data }; }, peg$c82 = "[", peg$c83 = peg$literalExpectation("[", false), peg$c84 = "]", peg$c85 = peg$literalExpectation("]", false), peg$c86 = function (pairs) {
+    }, peg$c15 = "for", peg$c16 = peg$literalExpectation("for", false), peg$c17 = function (var_, iter, body) { return { type: types.Instr_Type["for"], "var": var_.data, iter: iter, body: body }; }, peg$c18 = "while", peg$c19 = peg$literalExpectation("while", false), peg$c20 = function (cond, body) { return { type: types.Instr_Type["while"], cond: cond, body: body }; }, peg$c21 = "'", peg$c22 = peg$literalExpectation("'", false), peg$c23 = "=", peg$c24 = peg$literalExpectation("=", false), peg$c25 = function (var_, deriv, def) { return { type: types.Instr_Type["var"], "var": var_.data, def: def, deriv_n: deriv.length }; }, peg$c26 = "fun", peg$c27 = peg$literalExpectation("fun", false), peg$c28 = function (fun, args, body) { return { type: types.Instr_Type.fun, fun: fun.data, args: args.map(function (arg) { return arg[0].data; }), body: body }; }, peg$c29 = "==", peg$c30 = peg$literalExpectation("==", false), peg$c31 = "/=", peg$c32 = peg$literalExpectation("/=", false), peg$c33 = "<=", peg$c34 = peg$literalExpectation("<=", false), peg$c35 = ">=", peg$c36 = peg$literalExpectation(">=", false), peg$c37 = "<", peg$c38 = peg$literalExpectation("<", false), peg$c39 = ">", peg$c40 = peg$literalExpectation(">", false), peg$c41 = "+", peg$c42 = peg$literalExpectation("+", false), peg$c43 = "~", peg$c44 = peg$literalExpectation("~", false), peg$c45 = "-", peg$c46 = peg$literalExpectation("-", false), peg$c47 = "*", peg$c48 = peg$literalExpectation("*", false), peg$c49 = "/", peg$c50 = peg$literalExpectation("/", false), peg$c51 = "^", peg$c52 = peg$literalExpectation("^", false), peg$c53 = "%%", peg$c54 = peg$literalExpectation("%%", false), peg$c55 = "%", peg$c56 = peg$literalExpectation("%", false), peg$c57 = "@", peg$c58 = peg$literalExpectation("@", false), peg$c59 = "&", peg$c60 = peg$literalExpectation("&", false), peg$c61 = "|", peg$c62 = peg$literalExpectation("|", false), peg$c63 = "!", peg$c64 = peg$literalExpectation("!", false), peg$c65 = function () { return { type: types.Instr_Type.op, data: types.Op[text()] }; }, peg$c66 = "??", peg$c67 = peg$literalExpectation("??", false), peg$c68 = function () { return { type: types.Instr_Type.op, data: types.Op["??"], num: 0 }; }, peg$c69 = "?", peg$c70 = peg$literalExpectation("?", false), peg$c71 = function (num) { return { type: types.Instr_Type.op, data: types.Op["??"], num: num.data }; }, peg$c72 = "var", peg$c73 = peg$literalExpectation("var", false), peg$c74 = /^[A-Za-z_]/, peg$c75 = peg$classExpectation([["A", "Z"], ["a", "z"], "_"], false, false), peg$c76 = /^[A-Za-z0-9_]/, peg$c77 = peg$classExpectation([["A", "Z"], ["a", "z"], ["0", "9"], "_"], false, false), peg$c78 = function () { return { type: types.Instr_Type.name, data: text() }; }, peg$c79 = "`", peg$c80 = peg$literalExpectation("`", false), peg$c81 = function (ref) { return { type: types.Instr_Type.ref, data: ref.data }; }, peg$c82 = "[", peg$c83 = peg$literalExpectation("[", false), peg$c84 = "]", peg$c85 = peg$literalExpectation("]", false), peg$c86 = function (pairs) {
         return {
-            type: types.Node_Type.obj,
-            data: pairs.map(function (pair) { return { key: pair[1].data, value: pair[2] }; })
+            type: types.Instr_Type.obj,
+            pairs: pairs.map(function (pair) { return { key: pair[1].data, value: pair[2] }; })
         };
-    }, peg$c87 = ".", peg$c88 = peg$literalExpectation(".", false), peg$c89 = function (prop) { return { type: types.Node_Type.prop, data: prop.data }; }, peg$c90 = function (instrs) { return { type: types.Node_Type.ls, data: instrs }; }, peg$c91 = /^[0-9]/, peg$c92 = peg$classExpectation([["0", "9"]], false, false), peg$c93 = function () { return { type: types.Node_Type.num, data: parseFloat(text()) }; }, peg$c94 = "\"", peg$c95 = peg$literalExpectation("\"", false), peg$c96 = /^[^"\\]/, peg$c97 = peg$classExpectation(["\"", "\\"], true, false), peg$c98 = "\\", peg$c99 = peg$literalExpectation("\\", false), peg$c100 = peg$anyExpectation(), peg$c101 = function () {
+    }, peg$c87 = ".", peg$c88 = peg$literalExpectation(".", false), peg$c89 = function (prop) { return { type: types.Instr_Type.prop, data: prop.data }; }, peg$c90 = function (instrs) { return { type: types.Instr_Type.ls, items: instrs }; }, peg$c91 = /^[0-9]/, peg$c92 = peg$classExpectation([["0", "9"]], false, false), peg$c93 = function () { return { type: types.Instr_Type.num, data: parseFloat(text()) }; }, peg$c94 = "\"", peg$c95 = peg$literalExpectation("\"", false), peg$c96 = /^[^"\\]/, peg$c97 = peg$classExpectation(["\"", "\\"], true, false), peg$c98 = "\\", peg$c99 = peg$literalExpectation("\\", false), peg$c100 = peg$anyExpectation(), peg$c101 = function () {
         return {
-            type: types.Node_Type.str,
-            data: text().slice(1, -1).replace("\\n", "\n").replace(/\\(.)/g, "$1")
+            type: types.Instr_Type.str,
+            data: text().slice(1, -1) // .replace("\\n", "\n").replace(/\\(.)/g, "$1")
         };
-    }, peg$c102 = "{", peg$c103 = peg$literalExpectation("{", false), peg$c104 = "}", peg$c105 = peg$literalExpectation("}", false), peg$c106 = /^[+\-]/, peg$c107 = peg$classExpectation(["+", "-"], false, false), peg$c108 = /^[*\/]/, peg$c109 = peg$classExpectation(["*", "/"], false, false), peg$c110 = "(", peg$c111 = peg$literalExpectation("(", false), peg$c112 = ")", peg$c113 = peg$literalExpectation(")", false), peg$c114 = "x", peg$c115 = peg$literalExpectation("x", false), peg$c116 = "y", peg$c117 = peg$literalExpectation("y", false), peg$c118 = /^[a-wz]/, peg$c119 = peg$classExpectation([["a", "w"], "z"], false, false), peg$c120 = ",", peg$c121 = peg$literalExpectation(",", false), peg$c122 = "abs", peg$c123 = peg$literalExpectation("abs", false), peg$c124 = "sqrt", peg$c125 = peg$literalExpectation("sqrt", false), peg$c126 = "cbrt", peg$c127 = peg$literalExpectation("cbrt", false), peg$c128 = "ln", peg$c129 = peg$literalExpectation("ln", false), peg$c130 = "cosh", peg$c131 = peg$literalExpectation("cosh", false), peg$c132 = "sinh", peg$c133 = peg$literalExpectation("sinh", false), peg$c134 = "tanh", peg$c135 = peg$literalExpectation("tanh", false), peg$c136 = "coth", peg$c137 = peg$literalExpectation("coth", false), peg$c138 = "sech", peg$c139 = peg$literalExpectation("sech", false), peg$c140 = "csch", peg$c141 = peg$literalExpectation("csch", false), peg$c142 = "cos", peg$c143 = peg$literalExpectation("cos", false), peg$c144 = "sin", peg$c145 = peg$literalExpectation("sin", false), peg$c146 = "tan", peg$c147 = peg$literalExpectation("tan", false), peg$c148 = "cot", peg$c149 = peg$literalExpectation("cot", false), peg$c150 = "sec", peg$c151 = peg$literalExpectation("sec", false), peg$c152 = "csc", peg$c153 = peg$literalExpectation("csc", false), peg$c154 = "arccosh", peg$c155 = peg$literalExpectation("arccosh", false), peg$c156 = "arcsinh", peg$c157 = peg$literalExpectation("arcsinh", false), peg$c158 = "arctanh", peg$c159 = peg$literalExpectation("arctanh", false), peg$c160 = "arccoth", peg$c161 = peg$literalExpectation("arccoth", false), peg$c162 = "arcsech", peg$c163 = peg$literalExpectation("arcsech", false), peg$c164 = "arccsch", peg$c165 = peg$literalExpectation("arccsch", false), peg$c166 = "arccos", peg$c167 = peg$literalExpectation("arccos", false), peg$c168 = "arcsin", peg$c169 = peg$literalExpectation("arcsin", false), peg$c170 = "arctan", peg$c171 = peg$literalExpectation("arctan", false), peg$c172 = "arccot", peg$c173 = peg$literalExpectation("arccot", false), peg$c174 = "arcsec", peg$c175 = peg$literalExpectation("arcsec", false), peg$c176 = "arccsc", peg$c177 = peg$literalExpectation("arccsc", false), peg$c178 = "root", peg$c179 = peg$literalExpectation("root", false), peg$c180 = "log", peg$c181 = peg$literalExpectation("log", false), peg$c182 = "sum", peg$c183 = peg$literalExpectation("sum", false), peg$c184 = "prod", peg$c185 = peg$literalExpectation("prod", false), peg$c186 = "pi", peg$c187 = peg$literalExpectation("pi", false), peg$c188 = "\u03C0", peg$c189 = peg$literalExpectation("\u03C0", false), peg$c190 = "tau", peg$c191 = peg$literalExpectation("tau", false), peg$c192 = "\u03C4", peg$c193 = peg$literalExpectation("\u03C4", false), peg$c194 = "e", peg$c195 = peg$literalExpectation("e", false), peg$c196 = "#(", peg$c197 = peg$literalExpectation("#(", false), peg$c198 = /^[^)]/, peg$c199 = peg$classExpectation([")"], true, false), peg$c200 = function () { return { type: types.Node_Type.cmmnt, cmmnt: text().slice(2, -1) }; }, peg$c201 = /^[ \t\n\r]/, peg$c202 = peg$classExpectation([" ", "\t", "\n", "\r"], false, false), peg$currPos = 0, peg$savedPos = 0, peg$posDetailsCache = [{ line: 1, column: 1 }], peg$maxFailPos = 0, peg$maxFailExpected = [], peg$silentFails = 0, peg$result;
+    }, peg$c102 = "{", peg$c103 = peg$literalExpectation("{", false), peg$c104 = "}", peg$c105 = peg$literalExpectation("}", false), peg$c106 = /^[+\-]/, peg$c107 = peg$classExpectation(["+", "-"], false, false), peg$c108 = /^[*\/]/, peg$c109 = peg$classExpectation(["*", "/"], false, false), peg$c110 = "(", peg$c111 = peg$literalExpectation("(", false), peg$c112 = ")", peg$c113 = peg$literalExpectation(")", false), peg$c114 = "x", peg$c115 = peg$literalExpectation("x", false), peg$c116 = "y", peg$c117 = peg$literalExpectation("y", false), peg$c118 = /^[a-wz]/, peg$c119 = peg$classExpectation([["a", "w"], "z"], false, false), peg$c120 = ",", peg$c121 = peg$literalExpectation(",", false), peg$c122 = "abs", peg$c123 = peg$literalExpectation("abs", false), peg$c124 = "sqrt", peg$c125 = peg$literalExpectation("sqrt", false), peg$c126 = "cbrt", peg$c127 = peg$literalExpectation("cbrt", false), peg$c128 = "ln", peg$c129 = peg$literalExpectation("ln", false), peg$c130 = "cosh", peg$c131 = peg$literalExpectation("cosh", false), peg$c132 = "sinh", peg$c133 = peg$literalExpectation("sinh", false), peg$c134 = "tanh", peg$c135 = peg$literalExpectation("tanh", false), peg$c136 = "coth", peg$c137 = peg$literalExpectation("coth", false), peg$c138 = "sech", peg$c139 = peg$literalExpectation("sech", false), peg$c140 = "csch", peg$c141 = peg$literalExpectation("csch", false), peg$c142 = "cos", peg$c143 = peg$literalExpectation("cos", false), peg$c144 = "sin", peg$c145 = peg$literalExpectation("sin", false), peg$c146 = "tan", peg$c147 = peg$literalExpectation("tan", false), peg$c148 = "cot", peg$c149 = peg$literalExpectation("cot", false), peg$c150 = "sec", peg$c151 = peg$literalExpectation("sec", false), peg$c152 = "csc", peg$c153 = peg$literalExpectation("csc", false), peg$c154 = "arccosh", peg$c155 = peg$literalExpectation("arccosh", false), peg$c156 = "arcsinh", peg$c157 = peg$literalExpectation("arcsinh", false), peg$c158 = "arctanh", peg$c159 = peg$literalExpectation("arctanh", false), peg$c160 = "arccoth", peg$c161 = peg$literalExpectation("arccoth", false), peg$c162 = "arcsech", peg$c163 = peg$literalExpectation("arcsech", false), peg$c164 = "arccsch", peg$c165 = peg$literalExpectation("arccsch", false), peg$c166 = "arccos", peg$c167 = peg$literalExpectation("arccos", false), peg$c168 = "arcsin", peg$c169 = peg$literalExpectation("arcsin", false), peg$c170 = "arctan", peg$c171 = peg$literalExpectation("arctan", false), peg$c172 = "arccot", peg$c173 = peg$literalExpectation("arccot", false), peg$c174 = "arcsec", peg$c175 = peg$literalExpectation("arcsec", false), peg$c176 = "arccsc", peg$c177 = peg$literalExpectation("arccsc", false), peg$c178 = "root", peg$c179 = peg$literalExpectation("root", false), peg$c180 = "log", peg$c181 = peg$literalExpectation("log", false), peg$c182 = "sum", peg$c183 = peg$literalExpectation("sum", false), peg$c184 = "prod", peg$c185 = peg$literalExpectation("prod", false), peg$c186 = "pi", peg$c187 = peg$literalExpectation("pi", false), peg$c188 = "\u03C0", peg$c189 = peg$literalExpectation("\u03C0", false), peg$c190 = "tau", peg$c191 = peg$literalExpectation("tau", false), peg$c192 = "\u03C4", peg$c193 = peg$literalExpectation("\u03C4", false), peg$c194 = "e", peg$c195 = peg$literalExpectation("e", false), peg$c196 = "#(", peg$c197 = peg$literalExpectation("#(", false), peg$c198 = /^[^)]/, peg$c199 = peg$classExpectation([")"], true, false), peg$c200 = function () { return { type: types.Instr_Type.cmmnt, data: text().slice(2, -1) }; }, peg$c201 = /^[ \t\n\r]/, peg$c202 = peg$classExpectation([" ", "\t", "\n", "\r"], false, false), peg$currPos = 0, peg$savedPos = 0, peg$posDetailsCache = [{ line: 1, column: 1 }], peg$maxFailPos = 0, peg$maxFailExpected = [], peg$silentFails = 0, peg$result;
     if ("startRule" in options) {
         if (!(options.startRule in peg$startRuleFunctions)) {
             throw new Error("Can't start parsing from rule \"" + options.startRule + "\".");
@@ -3631,25 +3653,28 @@ module.exports = {
 };
 module.exports = module.exports;
 
-},{"./types":3}],3:[function(require,module,exports){
+},{"./types":4}],4:[function(require,module,exports){
 "use strict";
-var Node_Type;
-(function (Node_Type) {
-    Node_Type[Node_Type["op"] = 0] = "op";
-    Node_Type[Node_Type["name"] = 1] = "name";
-    Node_Type[Node_Type["ref"] = 2] = "ref";
-    Node_Type[Node_Type["obj"] = 3] = "obj";
-    Node_Type[Node_Type["prop"] = 4] = "prop";
-    Node_Type[Node_Type["ls"] = 5] = "ls";
-    Node_Type[Node_Type["num"] = 6] = "num";
-    Node_Type[Node_Type["str"] = 7] = "str";
-    Node_Type[Node_Type["if"] = 8] = "if";
-    Node_Type[Node_Type["for"] = 9] = "for";
-    Node_Type[Node_Type["while"] = 10] = "while";
-    Node_Type[Node_Type["var"] = 11] = "var";
-    Node_Type[Node_Type["fun"] = 12] = "fun";
-    Node_Type[Node_Type["cmmnt"] = 13] = "cmmnt";
-})(Node_Type || (Node_Type = {}));
+exports.__esModule = true;
+exports.Op = exports.Instr_Type = void 0;
+var Instr_Type;
+(function (Instr_Type) {
+    Instr_Type[Instr_Type["op"] = 0] = "op";
+    Instr_Type[Instr_Type["name"] = 1] = "name";
+    Instr_Type[Instr_Type["ref"] = 2] = "ref";
+    Instr_Type[Instr_Type["obj"] = 3] = "obj";
+    Instr_Type[Instr_Type["prop"] = 4] = "prop";
+    Instr_Type[Instr_Type["ls"] = 5] = "ls";
+    Instr_Type[Instr_Type["num"] = 6] = "num";
+    Instr_Type[Instr_Type["str"] = 7] = "str";
+    Instr_Type[Instr_Type["if"] = 8] = "if";
+    Instr_Type[Instr_Type["for"] = 9] = "for";
+    Instr_Type[Instr_Type["while"] = 10] = "while";
+    Instr_Type[Instr_Type["var"] = 11] = "var";
+    Instr_Type[Instr_Type["fun"] = 12] = "fun";
+    Instr_Type[Instr_Type["cmmnt"] = 13] = "cmmnt";
+})(Instr_Type || (Instr_Type = {}));
+exports.Instr_Type = Instr_Type;
 var Op;
 (function (Op) {
     Op[Op["=="] = 0] = "==";
@@ -3673,7 +3698,7 @@ var Op;
     Op[Op["!"] = 18] = "!";
     Op[Op["??"] = 19] = "??"; // Special interaction
 })(Op || (Op = {}));
-module.exports = { Node_Type: Node_Type, Op: Op };
+exports.Op = Op;
 
-},{}]},{},[1])(1)
+},{}]},{},[2])(2)
 });
