@@ -3,18 +3,51 @@
 exports.__esModule = true;
 exports.compile = void 0;
 var types = require("./types");
-function compile(ast) {
+var block_prelude = "let st = [];\n";
+function compile(ast, indent) {
+    if (indent === void 0) { indent = 0; }
     var compiled = ast.map(function (instrs) { return instrs.map(function (instr) {
         switch (instr.type) {
             case types.Instr_Type.op:
-                return types.Op[instr.data];
+                return "__ops[\"" + types.Op[instr.data] + "\"]();";
+            case types.Instr_Type.name:
+                // Tell if function or var
+                return "st.push(" + instr.data + ");";
+            case types.Instr_Type.ref:
+                return "st.push(" + instr.data + ");";
+            case types.Instr_Type.prop:
+                return "st.push(st.pop()." + instr.data + ")";
+            case types.Instr_Type.ls:
+                return "st.push((() => {\n" + compile(instr.items, indent + 1) + "\n" + tabs(indent + 1) + "return st;\n" + tabs(indent) + "})())";
+            case types.Instr_Type.num:
+                return "st.push(" + instr.data + ");";
+            case types.Instr_Type.str:
+                return "st.push(\"" + instr.data + "\");";
+            // **FIX NESTED ST**
+            case types.Instr_Type["if"]:
+                return instr.branches.map(function (branch) {
+                    return (branch.cond
+                        ? "if((() => {\n" + compile(branch.cond, indent + 1) + "\n" + tabs(indent + 1) + "return st.pop();\n" + tabs(indent) + "})()) "
+                        : "") + "{\n" + compile(branch.body, indent + 1) + "\n" + tabs(indent) + "}";
+                }).join(" else ");
+            case types.Instr_Type["for"]:
+                return "for(let " + instr["var"] + " of (() => {\n" + compile(instr.iter, indent + 1) + "\n" + tabs(indent + 1) + "return st.pop();\n" + tabs(indent) + "})()) {\n" + compile(instr.body, indent + 1) + "\n" + tabs(indent) + "}";
+            case types.Instr_Type.cmmnt:
+                return "/*" + instr.data + "*/";
             default:
-                return "NOT OP";
+                return "NOT OP;";
         }
     }); });
-    return compiled.map(function (comp_instrs) { return comp_instrs.join(";\n"); }).join(";\n") + ";";
+    return tabs(indent) + block_prelude + compiled.map(function (comp_instrs) {
+        return comp_instrs.map(function (instr) {
+            return tabs(indent) + instr;
+        }).join("\n");
+    }).join("\n");
 }
 exports.compile = compile;
+function tabs(indent) {
+    return "\t".repeat(indent);
+}
 
 },{"./types":4}],2:[function(require,module,exports){
 "use strict";
