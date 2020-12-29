@@ -41,9 +41,6 @@ function compile_rec(
 				return `st.push(${instr.data});`;
 			case types.Instr_Type.str:
 				return `st.push("${instr.data}");`;
-			
-			// **FIX NESTED ST**
-			
 			case types.Instr_Type.if:
 				return instr.branches.map(branch =>
 					`${
