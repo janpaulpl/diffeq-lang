@@ -2,7 +2,7 @@ Block = _ instr_chunks:(Instrs _ (";" _ Instrs _)*)
 	{return [instr_chunks[0], ...instr_chunks[2].map(instr => instr[2])]}
 
 Instrs = _ instrs:(Instr _)*
-	{return instrs.map(instr => instr[0])}
+	{return instrs.map(instr => instr[0]).reverse()}
 
 Instr
 	= Keywd

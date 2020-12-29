@@ -4,8 +4,11 @@ exports.__esModule = true;
 exports.compile = void 0;
 var types = require("./types");
 var block_prelude = "let st = [];\n";
-function compile(ast, indent) {
-    if (indent === void 0) { indent = 0; }
+function compile(ast) {
+    return block_prelude + compile_rec(ast, 0);
+}
+exports.compile = compile;
+function compile_rec(ast, indent) {
     var compiled = ast.map(function (instrs) { return instrs.map(function (instr) {
         switch (instr.type) {
             case types.Instr_Type.op:
@@ -18,7 +21,7 @@ function compile(ast, indent) {
             case types.Instr_Type.prop:
                 return "st.push(st.pop()." + instr.data + ")";
             case types.Instr_Type.ls:
-                return "st.push((() => {\n" + compile(instr.items, indent + 1) + "\n" + tabs(indent + 1) + "return st;\n" + tabs(indent) + "})())";
+                return "st.push((() => {\n" + tabs(indent + 1) + "let st = [];\n" + compile_rec(instr.items, indent + 1) + "\n" + tabs(indent + 1) + "return st.reverse();\n" + tabs(indent) + "})())";
             case types.Instr_Type.num:
                 return "st.push(" + instr.data + ");";
             case types.Instr_Type.str:
@@ -27,24 +30,23 @@ function compile(ast, indent) {
             case types.Instr_Type["if"]:
                 return instr.branches.map(function (branch) {
                     return (branch.cond
-                        ? "if((() => {\n" + compile(branch.cond, indent + 1) + "\n" + tabs(indent + 1) + "return st.pop();\n" + tabs(indent) + "})()) "
-                        : "") + "{\n" + compile(branch.body, indent + 1) + "\n" + tabs(indent) + "}";
+                        ? "if((() => {\n" + compile_rec(branch.cond, indent + 1) + "\n" + tabs(indent + 1) + "return st.pop();\n" + tabs(indent) + "})()) "
+                        : "") + "{\n" + compile_rec(branch.body, indent + 1) + "\n" + tabs(indent) + "}";
                 }).join(" else ");
             case types.Instr_Type["for"]:
-                return "for(let " + instr["var"] + " of (() => {\n" + compile(instr.iter, indent + 1) + "\n" + tabs(indent + 1) + "return st.pop();\n" + tabs(indent) + "})()) {\n" + compile(instr.body, indent + 1) + "\n" + tabs(indent) + "}";
+                return "for(let " + instr["var"] + " of (() => {\n" + compile_rec(instr.iter, indent + 1) + "\n" + tabs(indent + 1) + "return st.pop();\n" + tabs(indent) + "})()) {\n" + compile_rec(instr.body, indent + 1) + "\n" + tabs(indent) + "}";
             case types.Instr_Type.cmmnt:
                 return "/*" + instr.data + "*/";
             default:
                 return "NOT OP;";
         }
     }); });
-    return tabs(indent) + block_prelude + compiled.map(function (comp_instrs) {
+    return compiled.map(function (comp_instrs) {
         return comp_instrs.map(function (instr) {
             return tabs(indent) + instr;
         }).join("\n");
     }).join("\n");
 }
-exports.compile = compile;
 function tabs(indent) {
     return "\t".repeat(indent);
 }
@@ -181,7 +183,7 @@ peg$SyntaxError.buildMessage = function (expected, found) {
 };
 function peg$parse(input, options) {
     options = options !== void 0 ? options : {};
-    var peg$FAILED = {}, peg$startRuleFunctions = { Block: peg$parseBlock }, peg$startRuleFunction = peg$parseBlock, peg$c0 = ";", peg$c1 = peg$literalExpectation(";", false), peg$c2 = function (instr_chunks) { return __spreadArrays([instr_chunks[0]], instr_chunks[2].map(function (instr) { return instr[2]; })); }, peg$c3 = function (instrs) { return instrs.map(function (instr) { return instr[0]; }); }, peg$c4 = "if", peg$c5 = peg$literalExpectation("if", false), peg$c6 = ":", peg$c7 = peg$literalExpectation(":", false), peg$c8 = "elif", peg$c9 = peg$literalExpectation("elif", false), peg$c10 = "else", peg$c11 = peg$literalExpectation("else", false), peg$c12 = "end", peg$c13 = peg$literalExpectation("end", false), peg$c14 = function (cond, if_branch, elif_branches, else_branch) {
+    var peg$FAILED = {}, peg$startRuleFunctions = { Block: peg$parseBlock }, peg$startRuleFunction = peg$parseBlock, peg$c0 = ";", peg$c1 = peg$literalExpectation(";", false), peg$c2 = function (instr_chunks) { return __spreadArrays([instr_chunks[0]], instr_chunks[2].map(function (instr) { return instr[2]; })); }, peg$c3 = function (instrs) { return instrs.map(function (instr) { return instr[0]; }).reverse(); }, peg$c4 = "if", peg$c5 = peg$literalExpectation("if", false), peg$c6 = ":", peg$c7 = peg$literalExpectation(":", false), peg$c8 = "elif", peg$c9 = peg$literalExpectation("elif", false), peg$c10 = "else", peg$c11 = peg$literalExpectation("else", false), peg$c12 = "end", peg$c13 = peg$literalExpectation("end", false), peg$c14 = function (cond, if_branch, elif_branches, else_branch) {
         return { type: types.Instr_Type["if"], branches: __spreadArrays([
                 { cond: cond, body: if_branch }
             ], elif_branches.map(function (branch) { return ({ cond: branch[2], body: branch[6] }); }), (else_branch ? [{ cond: null, body: else_branch[2] }] : [])) };
