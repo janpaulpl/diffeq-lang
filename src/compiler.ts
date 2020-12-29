@@ -45,12 +45,12 @@ function compile_rec(
 				return instr.branches.map(branch =>
 					`${
 						branch.cond
-							? `if((() => {\n${compile_rec(branch.cond, indent + 1, vars, funcs)}\n${tabs(indent + 1)}return st.pop();\n${tabs(indent)}})()) `
+							? `if((() => {\n${compile_rec(branch.cond, indent + 2, vars, funcs)}\n${tabs(indent + 2)}return st.pop();\n${tabs(indent + 1)}})()) `
 							: ""
 					}{\n${compile_rec(branch.body, indent + 1, vars, funcs)}\n${tabs(indent)}}`
 				).join(" else ");
 			case types.Instr_Type.for:
-				return `for(const ${instr.var} of (() => {\n${compile_rec(instr.iter, indent + 1, vars, funcs)}\n${tabs(indent + 1)}return st.pop();\n${tabs(indent)}})()) {\n${compile_rec(instr.body, indent + 1, [...vars, instr.var], funcs)}\n${tabs(indent)}}`;
+				return `for(const ${instr.var} of (() => {\n${compile_rec(instr.iter, indent + 2, vars, funcs)}\n${tabs(indent + 2)}return st.pop();\n${tabs(indent + 1)}})()) {\n${compile_rec(instr.body, indent + 1, [...vars, instr.var], funcs)}\n${tabs(indent)}}`;
 			case types.Instr_Type.cmmnt:
 				return `/*${instr.data}*/`;
 			default:
