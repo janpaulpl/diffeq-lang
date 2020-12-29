@@ -1,27 +1,59 @@
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.main = f()}})(function(){var define,module,exports;return (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
 "use strict";
 exports.__esModule = true;
+exports.__false = exports.__true = exports.__print = void 0;
+function __print(st) {
+    console.log(st.pop());
+}
+exports.__print = __print;
+function __true(st) {
+    st.push(true);
+}
+exports.__true = __true;
+function __false(st) {
+    st.push(false);
+}
+exports.__false = __false;
+
+},{}],2:[function(require,module,exports){
+"use strict";
+var __spreadArrays = (this && this.__spreadArrays) || function () {
+    for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
+    for (var r = Array(s), k = 0, i = 0; i < il; i++)
+        for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
+            r[k] = a[j];
+    return r;
+};
+exports.__esModule = true;
 exports.compile = void 0;
 var types = require("./types");
-var block_prelude = "let st = [];\n";
+var prelude = "with(main.builtins) {\n\nlet st = [];\n";
+var postlude = "\n\n}";
+var builtins = ["print", "true", "false"];
 function compile(ast) {
-    return block_prelude + compile_rec(ast, 0);
+    return prelude + compile_rec(ast, 0, [], []) + postlude;
 }
 exports.compile = compile;
-function compile_rec(ast, indent) {
+function compile_rec(ast, indent, vars, funcs) {
     var compiled = ast.map(function (instrs) { return instrs.map(function (instr) {
         switch (instr.type) {
             case types.Instr_Type.op:
                 return "__ops[\"" + types.Op[instr.data] + "\"]();";
             case types.Instr_Type.name:
-                // Tell if function or var
-                return "st.push(" + instr.data + ");";
+                if (vars.includes(instr.data))
+                    return "st.push(" + instr.data + ")";
+                else if (funcs.includes(instr.data))
+                    return instr.data + "();";
+                else if (builtins.includes(instr.data))
+                    return "__" + instr.data + "(st);";
+                else
+                    throw instr.data + " is not a variable or function.";
             case types.Instr_Type.ref:
                 return "st.push(" + instr.data + ");";
             case types.Instr_Type.prop:
-                return "st.push(st.pop()." + instr.data + ")";
+                return "st.push(st.pop()." + instr.data + ");";
             case types.Instr_Type.ls:
-                return "st.push((() => {\n" + tabs(indent + 1) + "let st = [];\n" + compile_rec(instr.items, indent + 1) + "\n" + tabs(indent + 1) + "return st.reverse();\n" + tabs(indent) + "})())";
+                return "st.push((() => {\n" + tabs(indent + 1) + "let st = [];\n" + compile_rec(instr.items, indent + 1, vars, funcs) + "\n" + tabs(indent + 1) + "return st.reverse();\n" + tabs(indent) + "})())";
             case types.Instr_Type.num:
                 return "st.push(" + instr.data + ");";
             case types.Instr_Type.str:
@@ -30,11 +62,11 @@ function compile_rec(ast, indent) {
             case types.Instr_Type["if"]:
                 return instr.branches.map(function (branch) {
                     return (branch.cond
-                        ? "if((() => {\n" + compile_rec(branch.cond, indent + 1) + "\n" + tabs(indent + 1) + "return st.pop();\n" + tabs(indent) + "})()) "
-                        : "") + "{\n" + compile_rec(branch.body, indent + 1) + "\n" + tabs(indent) + "}";
+                        ? "if((() => {\n" + compile_rec(branch.cond, indent + 1, vars, funcs) + "\n" + tabs(indent + 1) + "return st.pop();\n" + tabs(indent) + "})()) "
+                        : "") + "{\n" + compile_rec(branch.body, indent + 1, vars, funcs) + "\n" + tabs(indent) + "}";
                 }).join(" else ");
             case types.Instr_Type["for"]:
-                return "for(let " + instr["var"] + " of (() => {\n" + compile_rec(instr.iter, indent + 1) + "\n" + tabs(indent + 1) + "return st.pop();\n" + tabs(indent) + "})()) {\n" + compile_rec(instr.body, indent + 1) + "\n" + tabs(indent) + "}";
+                return "for(const " + instr["var"] + " of (() => {\n" + compile_rec(instr.iter, indent + 1, vars, funcs) + "\n" + tabs(indent + 1) + "return st.pop();\n" + tabs(indent) + "})()) {\n" + compile_rec(instr.body, indent + 1, __spreadArrays(vars, [instr["var"]]), funcs) + "\n" + tabs(indent) + "}";
             case types.Instr_Type.cmmnt:
                 return "/*" + instr.data + "*/";
             default:
@@ -51,12 +83,14 @@ function tabs(indent) {
     return "\t".repeat(indent);
 }
 
-},{"./types":4}],2:[function(require,module,exports){
+},{"./types":5}],3:[function(require,module,exports){
 "use strict";
 exports.__esModule = true;
-exports.format = exports.run = void 0;
+exports.builtins = exports.format = exports.run = void 0;
 var parser = require("./parser");
 var compiler = require("./compiler");
+var builtins = require("./builtins");
+exports.builtins = builtins;
 function run(prog) {
     return compiler.compile(parser.parse(prog));
 }
@@ -64,7 +98,7 @@ exports.run = run;
 var format = function (s) { return s; };
 exports.format = format;
 
-},{"./compiler":1,"./parser":3}],3:[function(require,module,exports){
+},{"./builtins":1,"./compiler":2,"./parser":4}],4:[function(require,module,exports){
 "use strict";
 var __spreadArrays = (this && this.__spreadArrays) || function () {
     for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
@@ -3688,7 +3722,7 @@ module.exports = {
 };
 module.exports = module.exports;
 
-},{"./types":4}],4:[function(require,module,exports){
+},{"./types":5}],5:[function(require,module,exports){
 "use strict";
 exports.__esModule = true;
 exports.Op = exports.Instr_Type = void 0;
@@ -3735,5 +3769,5 @@ var Op;
 })(Op || (Op = {}));
 exports.Op = Op;
 
-},{}]},{},[2])(2)
+},{}]},{},[3])(3)
 });
