@@ -10,7 +10,7 @@ enum Op {
 	"^", "%%", "%", "'", // Extra math
 	"@", // List indexing
 	"&", "|", "!", // Boolean
-	"??" // Special interaction
+	"??", "?" // Special interaction
 }
 
 type Block = Instrs[]
@@ -18,7 +18,7 @@ type Block = Instrs[]
 type Instrs = Instr[]
 
 type Instr =
-	{type: Instr_Type.op, data: Op, num?: number} |
+	{type: Instr_Type.op, data: Op} |
 	{type: Instr_Type.name, data: string} |
 	{type: Instr_Type.ref, data: string} |
 	{type: Instr_Type.obj, pairs: {key: string, value: Block}[]} |

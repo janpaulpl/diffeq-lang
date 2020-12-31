@@ -47,12 +47,9 @@ Op
 		"+" / "~" / "-" / "*" / "/" /
 		"^" / "%%" / "%" / "'" /
 		"@" /
-		"&" / "|" / "!")
+		"&" / "|" / "!" /
+		"??" / "?")
 		{return {type: types.Instr_Type.op, data: types.Op[text()]}}
-	/ "??"
-		{return {type: types.Instr_Type.op, data: types.Op["??"], num: 0}}
-	/ "?" num:Num
-		{return {type: types.Instr_Type.op, data: types.Op["??"], num: num.data}}
 
 Name = ! ("if"/"else"/"elif"/"end"/"for"/"while"/"var"/"fun") [A-Za-z_][A-Za-z0-9_]*
 	{return {type: types.Instr_Type.name, data: text()}}
