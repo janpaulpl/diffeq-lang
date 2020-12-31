@@ -1,7 +1,7 @@
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.main = f()}})(function(){var define,module,exports;return (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
 "use strict";
 exports.__esModule = true;
-exports.__false = exports.__true = exports.__print = void 0;
+exports.__ops = exports.__false = exports.__true = exports.__print = void 0;
 function __print(st) {
     console.log(st.pop());
 }
@@ -14,6 +14,24 @@ function __false(st) {
     st.push(false);
 }
 exports.__false = __false;
+var __ops = {
+    "+": function (st) {
+        st.push(st.pop() + st.pop());
+    },
+    "~": function (st) {
+        st.push(-st.pop());
+    },
+    "-": function (st) {
+        st.push(st.pop() - st.pop());
+    },
+    "*": function (st) {
+        st.push(st.pop() * st.pop());
+    },
+    "/": function (st) {
+        st.push(st.pop() / st.pop());
+    }
+};
+exports.__ops = __ops;
 
 },{}],2:[function(require,module,exports){
 "use strict";
@@ -38,10 +56,10 @@ function compile_rec(ast, indent, vars, funcs) {
     var compiled = ast.map(function (instrs) { return instrs.map(function (instr) {
         switch (instr.type) {
             case types.Instr_Type.op:
-                return "__ops[\"" + types.Op[instr.data] + "\"]();";
+                return "__ops[\"" + types.Op[instr.data] + "\"](st);";
             case types.Instr_Type.name:
                 if (vars.includes(instr.data))
-                    return "st.push(" + instr.data + ")";
+                    return "st.push(" + instr.data + ");";
                 else if (funcs.includes(instr.data))
                     return instr.data + "();";
                 else if (builtins.includes(instr.data))
@@ -66,6 +84,8 @@ function compile_rec(ast, indent, vars, funcs) {
                 }).join(" else ");
             case types.Instr_Type["for"]:
                 return "for(const " + instr["var"] + " of (() => {\n" + compile_rec(instr.iter, indent + 2, vars, funcs) + "\n" + tabs(indent + 2) + "return st.pop();\n" + tabs(indent + 1) + "})()) {\n" + compile_rec(instr.body, indent + 1, __spreadArrays(vars, [instr["var"]]), funcs) + "\n" + tabs(indent) + "}";
+            case types.Instr_Type["while"]:
+                return "while((() => {\n" + compile_rec(instr.cond, indent + 2, vars, funcs) + "\n" + tabs(indent + 2) + "return st.pop();\n" + tabs(indent + 1) + "})()) {\n" + compile_rec(instr.body, indent + 1, vars, funcs) + "\n" + tabs(indent) + "}";
             case types.Instr_Type.cmmnt:
                 return "/*" + instr.data + "*/";
             default:
