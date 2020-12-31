@@ -13,9 +13,9 @@ enum Op {
 	"??", "?" // Special interaction
 }
 
-type Block = Instrs[]
+type Block = Instrs[];
 
-type Instrs = Instr[]
+type Instrs = Instr[];
 
 type Instr =
 	{type: Instr_Type.op, data: Op} |
