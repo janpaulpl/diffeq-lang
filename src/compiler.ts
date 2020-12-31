@@ -53,6 +53,14 @@ function compile_rec(
 				return `for(const ${instr.var} of (() => {\n${compile_rec(instr.iter, indent + 2, vars, funcs)}\n${tabs(indent + 2)}return st.pop();\n${tabs(indent + 1)}})()) {\n${compile_rec(instr.body, indent + 1, [...vars, instr.var], funcs)}\n${tabs(indent)}}`;
 			case types.Instr_Type.while:
 				return `while((() => {\n${compile_rec(instr.cond, indent + 2, vars, funcs)}\n${tabs(indent + 2)}return st.pop();\n${tabs(indent + 1)}})()) {\n${compile_rec(instr.body, indent + 1, vars, funcs)}\n${tabs(indent)}}`;
+			case types.Instr_Type.local:
+				if(!vars.includes(instr.var))
+					vars = [...vars, instr.var];
+				return `let ${instr.var} = (() => {\n${compile_rec([instr.def], indent + 1, vars, funcs)}\n${tabs(indent + 1)}return st.pop();\n${tabs(indent)}})();`;
+			case types.Instr_Type.var:
+				if(!vars.includes(instr.var))
+					vars = [...vars, instr.var];
+				return `${instr.var} = (() => {\n${compile_rec([instr.def], indent + 1, vars, funcs)}\n${tabs(indent + 1)}return st.pop();\n${tabs(indent)}})();`;
 			case types.Instr_Type.cmmnt:
 				return `/*${instr.data}*/`;
 			default:

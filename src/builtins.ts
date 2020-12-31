@@ -11,6 +11,9 @@ function __false(st: any[]) {
 }
 
 let __ops = {
+	
+	// Arithmetic
+	
 	"+"(st: any[]) {
 		st.push(st.pop() + st.pop());
 	},
@@ -18,17 +21,43 @@ let __ops = {
 	"~"(st:any[]) {
 		st.push(-st.pop());
 	},
-
+	
 	"-"(st: any[]) {
 		st.push(st.pop() - st.pop());
 	},
-
+	
 	"*"(st:any[]) {
 		st.push(st.pop() * st.pop());
 	},
-
+	
 	"/"(st:any[]) {
 		st.push(st.pop() / st.pop());
+	},
+	
+	// Extra math
+	
+	"^"(st:any[]) {
+		st.push(st.pop() ** st.pop());
+	},
+	
+	"%%"(st:any[]) {
+		st.push(st.pop() % st.pop() == 0);
+	},
+	
+	"%"(st:any[]) {
+		st.push(st.pop() % st.pop());
+	},
+	
+	// List indexing
+	
+	"@"(st:any[]) {
+		st.push(st.pop()[st.pop()]);
+	},
+
+	// Boolean
+
+	"&"(st:any[]) {
+		st.push(st.pop())
 	}
 };
 
