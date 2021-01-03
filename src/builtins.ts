@@ -18,6 +18,18 @@ function __e(st: any[]) {
 	st.push(Math.E);
 }
 
+function __sin(st: any[]) {
+	st.push(Math.sin(st.pop()));
+}
+
+function __cos(st: any[]) {
+	st.push(Math.cos(st.pop()));
+}
+
+function __tan(st: any[]) {
+	st.push(Math.tan(st.pop()));
+}
+
 let __ops = {
 	
 	// Arithmetic
@@ -83,4 +95,4 @@ let __ops = {
 	// Nth previous one: "??"(st: any[]) { }
 };
 
-export {__print, __true, __false, __pi, __e, __ops};
+export {__print, __true, __false, __pi, __e, __sin, __cos, __tan, __ops};

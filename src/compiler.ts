@@ -8,7 +8,7 @@ let st = [];
 
 let postlude = "\n\n}";
 
-let builtins = ["print", "true", "false", "pi", "e"];
+let builtins = ["print", "true", "false", "pi", "e", "sin", "cos", "tan"];
 
 function compile(ast: types.Block): string {
 	return prelude + compile_rec(ast, 0, [], []) + postlude;
