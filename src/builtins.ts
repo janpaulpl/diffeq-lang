@@ -10,6 +10,14 @@ function __false(st: any[]) {
 	st.push(false);
 }
 
+function __pi(st: any[]) {
+	st.push(Math.PI);
+}
+
+function __e(st: any[]) {
+	st.push(Math.E);
+}
+
 let __ops = {
 	
 	// Arithmetic
@@ -75,4 +83,4 @@ let __ops = {
 	// Nth previous one: "??"(st: any[]) { }
 };
 
-export {__print, __true, __false, __ops};
+export {__print, __true, __false, __pi, __e, __ops};

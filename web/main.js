@@ -1,7 +1,7 @@
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.main = f()}})(function(){var define,module,exports;return (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
 "use strict";
 exports.__esModule = true;
-exports.__ops = exports.__false = exports.__true = exports.__print = void 0;
+exports.__ops = exports.__e = exports.__pi = exports.__false = exports.__true = exports.__print = void 0;
 function __print(st) {
     console.log(st.pop());
 }
@@ -14,6 +14,14 @@ function __false(st) {
     st.push(false);
 }
 exports.__false = __false;
+function __pi(st) {
+    st.push(Math.PI);
+}
+exports.__pi = __pi;
+function __e(st) {
+    st.push(Math.E);
+}
+exports.__e = __e;
 var __ops = {
     // Arithmetic
     "+": function (st) {
@@ -76,7 +84,7 @@ exports.compile = void 0;
 var types = require("./types");
 var prelude = "with(main.builtins) {\n\nlet st = [];\n";
 var postlude = "\n\n}";
-var builtins = ["print", "true", "false"];
+var builtins = ["print", "true", "false", "pi", "e"];
 function compile(ast) {
     return prelude + compile_rec(ast, 0, [], []) + postlude;
 }
