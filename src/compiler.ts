@@ -21,10 +21,10 @@ function compile_rec(
 	let compiled: string[][] = ast.map(instrs => instrs.map(instr => {
 		switch(instr.type) {
 			case types.Instr_Type.op:
-				return `__ops["${types.Op[instr.data]}"]();`;
+				return `__ops["${types.Op[instr.data]}"](st);`;
 			case types.Instr_Type.name:
 				if(vars.includes(instr.data))
-					return `st.push(${instr.data})`;
+					return `st.push(${instr.data});`;
 				else if(funcs.includes(instr.data))
 					return `${instr.data}();`;
 				else if(builtins.includes(instr.data))
@@ -51,6 +51,16 @@ function compile_rec(
 				).join(" else ");
 			case types.Instr_Type.for:
 				return `for(const ${instr.var} of (() => {\n${compile_rec(instr.iter, indent + 2, vars, funcs)}\n${tabs(indent + 2)}return st.pop();\n${tabs(indent + 1)}})()) {\n${compile_rec(instr.body, indent + 1, [...vars, instr.var], funcs)}\n${tabs(indent)}}`;
+			case types.Instr_Type.while:
+				return `while((() => {\n${compile_rec(instr.cond, indent + 2, vars, funcs)}\n${tabs(indent + 2)}return st.pop();\n${tabs(indent + 1)}})()) {\n${compile_rec(instr.body, indent + 1, vars, funcs)}\n${tabs(indent)}}`;
+			case types.Instr_Type.local:
+				if(!vars.includes(instr.var))
+					vars = [...vars, instr.var];
+				return `let ${instr.var} = (() => {\n${compile_rec([instr.def], indent + 1, vars, funcs)}\n${tabs(indent + 1)}return st.pop();\n${tabs(indent)}})();`;
+			case types.Instr_Type.var:
+				if(!vars.includes(instr.var))
+					vars = [...vars, instr.var];
+				return `${instr.var} = (() => {\n${compile_rec([instr.def], indent + 1, vars, funcs)}\n${tabs(indent + 1)}return st.pop();\n${tabs(indent)}})();`;
 			case types.Instr_Type.cmmnt:
 				return `/*${instr.data}*/`;
 			default:
