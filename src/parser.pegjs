@@ -9,9 +9,9 @@ Instr
 	/ Op
 	/ Name
 	/ Ref
+	/ Ls
 	/ Obj
 	/ Prop
-	/ Ls
 	/ Num
 	/ Str
 	/ Expr
@@ -57,7 +57,10 @@ Name = ! ("if"/"else"/"elif"/"end"/"for"/"while"/"var"/"fun") [A-Za-z_][A-Za-z0-
 Ref = "`" ref:Name
 	{return {type: types.Instr_Type.ref, data: ref.data}}
 
-Obj = "[" _ pairs:(":" Name Block)* "]" {return {
+Ls = "[" instrs:Block "]"
+	{return {type: types.Instr_Type.ls, items: instrs}}
+
+Obj = "#[" _ pairs:(":" Name Block)* "]" {return {
 	type: types.Instr_Type.obj,
 	pairs: pairs.map(
 		pair => {return {key: pair[1].data, value: pair[2]}}
@@ -66,9 +69,6 @@ Obj = "[" _ pairs:(":" Name Block)* "]" {return {
 
 Prop = "." prop:Name
 	{return {type: types.Instr_Type.prop, data: prop.data}}
-
-Ls = "[" instrs:Block "]"
-	{return {type: types.Instr_Type.ls, items: instrs}}
 
 Num = [0-9]+ ("." [0-9]+)?
 	{return {type: types.Instr_Type.num, data: parseFloat(text())}}

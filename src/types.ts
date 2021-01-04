@@ -1,5 +1,5 @@
 enum Instr_Type {
-	op, name, ref, obj, prop, ls, num, str, // Basic
+	op, name, ref, ls, obj, prop, num, str, // Basic
 	if, for, while, local, var, fun, // Structures
 	cmmnt
 }
@@ -21,9 +21,9 @@ type Instr =
 	{type: Instr_Type.op, data: Op} |
 	{type: Instr_Type.name, data: string} |
 	{type: Instr_Type.ref, data: string} |
+	{type: Instr_Type.ls, items: Block} |
 	{type: Instr_Type.obj, pairs: {key: string, value: Block}[]} |
 	{type: Instr_Type.prop, data: string} |
-	{type: Instr_Type.ls, items: Block} |
 	{type: Instr_Type.num, data: number} |
 	{type: Instr_Type.str, data: string} |
 	{type: Instr_Type.if, branches: {cond: Block, body: Block | null}[]} |

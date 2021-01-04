@@ -34,12 +34,12 @@ function compile_rec(
 					throw `${instr.data} is not a variable or function.`;
 			case types.Instr_Type.ref:
 				return `st.push(${instr.data});`;
+			case types.Instr_Type.ls:
+				return `st.push((() => {\n${tabs(indent + 1)}let st = [];\n${compile_rec(instr.items, indent + 1, vars, funcs)}\n${tabs(indent + 1)}return st.reverse();\n${tabs(indent)}})())`;
 			case types.Instr_Type.obj:
 				return `st.push({\n${instr.pairs.map(({key, value}) => `${tabs(indent + 1)}${key}: (() => {\n${compile_rec(value, indent + 2, vars, funcs)}\n${tabs(indent + 2)}return st.pop();\n${tabs(indent + 1)}})()`).join(",\n")}\n${tabs(indent)}});`;
 			case types.Instr_Type.prop:
 				return `st.push(st.pop().${instr.data});`;
-			case types.Instr_Type.ls:
-				return `st.push((() => {\n${tabs(indent + 1)}let st = [];\n${compile_rec(instr.items, indent + 1, vars, funcs)}\n${tabs(indent + 1)}return st.reverse();\n${tabs(indent)}})())`;
 			case types.Instr_Type.num:
 				return `st.push(${instr.data});`;
 			case types.Instr_Type.str:
