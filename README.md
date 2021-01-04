@@ -40,7 +40,7 @@ if == x y:
 else
 	print "diff";
 	+ 1 2
-end
+end;
 
 if a:
 	1
@@ -48,37 +48,37 @@ elif b:
 	2
 else
 	3
-end
+end;
 
 if a:
 	1
 elif b:
 	2
-end
+end;
 
-+ 1 2
++ 1 2;
 
-for x [2 3]: print x end
+for x [2 3]: print x end;
 
 x = 3;
 y'' = [2 3 4];
 
-fun fib n a b: if == n 0: a else fib  - n 1  b  + a b end end
+fun fib n a b: if == n 0: a else fib  - n 1  b  + a b end end;
 
-call
-print + 1 1  4
+call;
+print + 1 1  4;
 
-+ 1 1
-print ?? 4
++ 1 1;
+print ?? 4;
 
-map `inc [1 2 3]
-map inc [1 2 3]
+map `inc [1 2 3];
+map inc [1 2 3];
 
-+ "x \"+ 1" "x^2"
++ "x \"+ 1" "x^2";
 
-[:key "val\n\[ue" :a 4]
+[:key "val\n\[ue" :a 4];
 
-print "bruh" print 1
+print "bruh" print 1;
 ```
 
 #### Calculus Sublanguage
