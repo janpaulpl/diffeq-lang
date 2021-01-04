@@ -4,9 +4,10 @@ let prelude =
 `with(main.builtins) {
 
 let st = [];
+let out = [];
 `;
 
-let postlude = "\n\n}";
+let postlude = "\nout;\n}";
 
 let builtins = ["print", "true", "false", "pi", "e", "sin", "cos", "tan"];
 
@@ -21,14 +22,14 @@ function compile_rec(
 	let compiled: string[][] = ast.map(instrs => instrs.map(instr => {
 		switch(instr.type) {
 			case types.Instr_Type.op:
-				return `__ops["${types.Op[instr.data]}"](st);`;
+				return `__ops["${types.Op[instr.data]}"](st, out);`;
 			case types.Instr_Type.name:
 				if(vars.includes(instr.data))
 					return `st.push(${instr.data});`;
 				else if(funcs.includes(instr.data))
 					return `${instr.data}();`;
 				else if(builtins.includes(instr.data))
-					return `__${instr.data}(st);`;
+					return `__${instr.data}(st, out);`;
 				else
 					throw `${instr.data} is not a variable or function.`;
 			case types.Instr_Type.ref:
@@ -55,6 +56,8 @@ function compile_rec(
 				return `for(const ${instr.var} of (() => {\n${compile_rec(instr.iter, indent + 2, vars, funcs)}\n${tabs(indent + 2)}return st.pop();\n${tabs(indent + 1)}})()) {\n${compile_rec(instr.body, indent + 1, [...vars, instr.var], funcs)}\n${tabs(indent)}}`;
 			case types.Instr_Type.while:
 				return `while((() => {\n${compile_rec(instr.cond, indent + 2, vars, funcs)}\n${tabs(indent + 2)}return st.pop();\n${tabs(indent + 1)}})()) {\n${compile_rec(instr.body, indent + 1, vars, funcs)}\n${tabs(indent)}}`;
+			
+			// Add deriv.
 			case types.Instr_Type.local:
 				vars = [...vars, instr.var];
 				return `let ${instr.var} = (() => {\n${compile_rec([instr.def], indent + 1, vars, funcs)}\n${tabs(indent + 1)}return st.pop();\n${tabs(indent)}})();`;

@@ -6,6 +6,6 @@ function run(prog: string) {
 	return compiler.compile(parser.parse(prog));
 }
 
-let format = s => s;
+let format = s => JSON.stringify(eval(s));
 
 export {run, format, builtins};

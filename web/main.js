@@ -1,94 +1,92 @@
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.main = f()}})(function(){var define,module,exports;return (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
-"use strict";
 exports.__esModule = true;
 exports.__ops = exports.__tan = exports.__cos = exports.__sin = exports.__e = exports.__pi = exports.__false = exports.__true = exports.__print = void 0;
-function __print(st) {
-    console.log(st.pop());
+function __print(st, out) {
+    out.push(st.pop());
 }
 exports.__print = __print;
-function __true(st) {
+function __true(st, out) {
     st.push(true);
 }
 exports.__true = __true;
-function __false(st) {
+function __false(st, out) {
     st.push(false);
 }
 exports.__false = __false;
-function __pi(st) {
+function __pi(st, out) {
     st.push(Math.PI);
 }
 exports.__pi = __pi;
-function __e(st) {
+function __e(st, out) {
     st.push(Math.E);
 }
 exports.__e = __e;
-function __sin(st) {
+function __sin(st, out) {
     st.push(Math.sin(st.pop()));
 }
 exports.__sin = __sin;
-function __cos(st) {
+function __cos(st, out) {
     st.push(Math.cos(st.pop()));
 }
 exports.__cos = __cos;
-function __tan(st) {
+function __tan(st, out) {
     st.push(Math.tan(st.pop()));
 }
 exports.__tan = __tan;
 var __ops = {
     // Comparison
     // Fix for other types.
-    "==": function (st) {
+    "==": function (st, out) {
         st.push(st.pop() == st.pop());
     },
     // Arithmetic
-    "+": function (st) {
+    "+": function (st, out) {
         st.push(st.pop() + st.pop());
     },
     "~": function (st) {
         st.push(-st.pop());
     },
-    "-": function (st) {
+    "-": function (st, out) {
         st.push(st.pop() - st.pop());
     },
-    "*": function (st) {
+    "*": function (st, out) {
         st.push(st.pop() * st.pop());
     },
-    "/": function (st) {
+    "/": function (st, out) {
         st.push(st.pop() / st.pop());
     },
     // Extra math
-    "^": function (st) {
+    "^": function (st, out) {
         st.push(Math.pow(st.pop(), st.pop()));
     },
-    "%%": function (st) {
+    "%%": function (st, out) {
         st.push(st.pop() % st.pop() == 0);
     },
-    "%": function (st) {
+    "%": function (st, out) {
         st.push(st.pop() % st.pop());
     },
-    // Derivation: "'"(st: any[]) { }
+    // Derivation: "'"(st: any[], out: any[]) { }
     // List indexing
-    "@": function (st) {
+    "@": function (st, out) {
         st.push(st.pop()[st.pop()]);
     },
     // Boolean
-    "&": function (st) {
+    "&": function (st, out) {
         st.push(st.pop() && st.pop());
     },
-    "|": function (st) {
+    "|": function (st, out) {
         st.push(st.pop() || st.pop());
     },
-    "!": function (st) {
+    "!": function (st, out) {
         st.push(!(st.pop()));
     }
     // Special interaction
-    // Previous one: "?"(st: any[]) { }
-    // Nth previous one: "??"(st: any[]) { }
+    // Previous one: "?"(st: any[], out: any[]) { }
+    // Nth previous one: "??"(st: any[], out: any[]) { }
 };
 exports.__ops = __ops;
 
 },{}],2:[function(require,module,exports){
-"use strict";
 var __spreadArrays = (this && this.__spreadArrays) || function () {
     for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
     for (var r = Array(s), k = 0, i = 0; i < il; i++)
@@ -99,8 +97,8 @@ var __spreadArrays = (this && this.__spreadArrays) || function () {
 exports.__esModule = true;
 exports.compile = void 0;
 var types = require("./types");
-var prelude = "with(main.builtins) {\n\nlet st = [];\n";
-var postlude = "\n\n}";
+var prelude = "with(main.builtins) {\n\nlet st = [];\nlet out = [];\n";
+var postlude = "\nout;\n}";
 var builtins = ["print", "true", "false", "pi", "e", "sin", "cos", "tan"];
 function compile(ast) {
     return prelude + compile_rec(ast, 0, [], []) + postlude;
@@ -110,14 +108,14 @@ function compile_rec(ast, indent, vars, funcs) {
     var compiled = ast.map(function (instrs) { return instrs.map(function (instr) {
         switch (instr.type) {
             case types.Instr_Type.op:
-                return "__ops[\"" + types.Op[instr.data] + "\"](st);";
+                return "__ops[\"" + types.Op[instr.data] + "\"](st, out);";
             case types.Instr_Type.name:
                 if (vars.includes(instr.data))
                     return "st.push(" + instr.data + ");";
                 else if (funcs.includes(instr.data))
                     return instr.data + "();";
                 else if (builtins.includes(instr.data))
-                    return "__" + instr.data + "(st);";
+                    return "__" + instr.data + "(st, out);";
                 else
                     throw instr.data + " is not a variable or function.";
             case types.Instr_Type.ref:
@@ -145,6 +143,7 @@ function compile_rec(ast, indent, vars, funcs) {
                 return "for(const " + instr["var"] + " of (() => {\n" + compile_rec(instr.iter, indent + 2, vars, funcs) + "\n" + tabs(indent + 2) + "return st.pop();\n" + tabs(indent + 1) + "})()) {\n" + compile_rec(instr.body, indent + 1, __spreadArrays(vars, [instr["var"]]), funcs) + "\n" + tabs(indent) + "}";
             case types.Instr_Type["while"]:
                 return "while((() => {\n" + compile_rec(instr.cond, indent + 2, vars, funcs) + "\n" + tabs(indent + 2) + "return st.pop();\n" + tabs(indent + 1) + "})()) {\n" + compile_rec(instr.body, indent + 1, vars, funcs) + "\n" + tabs(indent) + "}";
+            // Add deriv.
             case types.Instr_Type.local:
                 vars = __spreadArrays(vars, [instr["var"]]);
                 return "let " + instr["var"] + " = (() => {\n" + compile_rec([instr.def], indent + 1, vars, funcs) + "\n" + tabs(indent + 1) + "return st.pop();\n" + tabs(indent) + "})();";
@@ -172,7 +171,6 @@ function tabs(indent) {
 }
 
 },{"./types":5}],3:[function(require,module,exports){
-"use strict";
 exports.__esModule = true;
 exports.builtins = exports.format = exports.run = void 0;
 var parser = require("./parser");
@@ -183,11 +181,10 @@ function run(prog) {
     return compiler.compile(parser.parse(prog));
 }
 exports.run = run;
-var format = function (s) { return s; };
+var format = function (s) { return JSON.stringify(eval(s)); };
 exports.format = format;
 
 },{"./builtins":1,"./compiler":2,"./parser":4}],4:[function(require,module,exports){
-"use strict";
 var __spreadArrays = (this && this.__spreadArrays) || function () {
     for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
     for (var r = Array(s), k = 0, i = 0; i < il; i++)
@@ -3899,7 +3896,6 @@ module.exports = {
 module.exports = module.exports;
 
 },{"./types":5}],5:[function(require,module,exports){
-"use strict";
 exports.__esModule = true;
 exports.Op = exports.Instr_Type = void 0;
 var Instr_Type;
