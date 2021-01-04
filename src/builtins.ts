@@ -32,6 +32,13 @@ function __tan(st: any[]) {
 
 let __ops = {
 	
+	// Comparison
+	
+	// Fix for other types.
+	"=="(st: any[]) {
+		st.push(st.pop() == st.pop());
+	},
+	
 	// Arithmetic
 	
 	"+"(st: any[]) {

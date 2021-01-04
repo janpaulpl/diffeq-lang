@@ -35,6 +35,11 @@ function __tan(st) {
 }
 exports.__tan = __tan;
 var __ops = {
+    // Comparison
+    // Fix for other types.
+    "==": function (st) {
+        st.push(st.pop() == st.pop());
+    },
     // Arithmetic
     "+": function (st) {
         st.push(st.pop() + st.pop());
