@@ -56,13 +56,15 @@ function compile_rec(
 			case types.Instr_Type.while:
 				return `while((() => {\n${compile_rec(instr.cond, indent + 2, vars, funcs)}\n${tabs(indent + 2)}return st.pop();\n${tabs(indent + 1)}})()) {\n${compile_rec(instr.body, indent + 1, vars, funcs)}\n${tabs(indent)}}`;
 			case types.Instr_Type.local:
-				if(!vars.includes(instr.var))
-					vars = [...vars, instr.var];
+				vars = [...vars, instr.var];
 				return `let ${instr.var} = (() => {\n${compile_rec([instr.def], indent + 1, vars, funcs)}\n${tabs(indent + 1)}return st.pop();\n${tabs(indent)}})();`;
 			case types.Instr_Type.var:
 				if(!vars.includes(instr.var))
 					vars = [...vars, instr.var];
 				return `${instr.var} = (() => {\n${compile_rec([instr.def], indent + 1, vars, funcs)}\n${tabs(indent + 1)}return st.pop();\n${tabs(indent)}})();`;
+			case types.Instr_Type.fun:
+				funcs = [...funcs, instr.fun];
+				return `function ${instr.fun}() {\n${instr.args.map(arg => `${tabs(indent + 1)}let ${arg} = st.pop();\n`).join("")}${compile_rec(instr.body, indent + 1, [...vars, ...instr.args], funcs)}\n${tabs(indent)}}`
 			case types.Instr_Type.cmmnt:
 				return `/*${instr.data}*/`;
 			default:
