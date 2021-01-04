@@ -76,7 +76,7 @@ map inc [1 2 3];
 
 + "x \"+ 1" "x^2";
 
-[:key "val\n\[ue" :a 4];
+#[:key "val\n\[ue" :a 4];
 
 print "bruh" print 1;
 ```
