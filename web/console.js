@@ -16,8 +16,8 @@ $(function() {
 				travel = past.length;
 				
 				$("#log").append(`
-					<p>${escape_input(prog)}</p>
-					<p>${main.format(result)}</p>
+					<p class="user-code-repeat">${escape_input(prog)}</p>
+					${main.format(result)}
 				`);
 				$("#log").scrollTop($("#log")[0].scrollHeight);
 				break;

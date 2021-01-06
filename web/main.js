@@ -98,7 +98,7 @@ exports.__esModule = true;
 exports.compile = void 0;
 var types = require("./types");
 var prelude = "with(main.builtins) {\n\nlet st = [];\nlet out = [];\n";
-var postlude = "\nout;\n}";
+var postlude = "\n\nout;\n}";
 var builtins = ["print", "true", "false", "pi", "e", "sin", "cos", "tan"];
 function compile(ast) {
     return prelude + compile_rec(ast, 0, [], []) + postlude;
@@ -176,10 +176,12 @@ var compiler = require("./compiler");
 var builtins = require("./builtins");
 exports.builtins = builtins;
 function run(prog) {
-    return compiler.compile(parser.parse(prog));
+    return eval(compiler.compile(parser.parse(prog)));
 }
 exports.run = run;
-var format = function (s) { return JSON.stringify(eval(s)); };
+function format(out) {
+    return out.map(function (o) { return "<p>" + o + "</p>"; }).join("");
+}
 exports.format = format;
 
 },{"./builtins":1,"./compiler":2,"./parser":4}],4:[function(require,module,exports){

@@ -20,6 +20,13 @@ html, body, #console {
 p {
 	margin-bottom: 6px;
 	margin-top: 0px;
+	margin-left: 32px;
+}
+
+.user-code-repeat {
+	margin-bottom: 12px;
+	margin-top: 24px;
+	margin-left: 0px;
 }
 
 #console {
@@ -50,7 +57,7 @@ p {
 }
 
 #log {
-	padding: 8px;
+	padding-left: 8px;
 	background: white;
 	flex: 1;
 	position: relative;
