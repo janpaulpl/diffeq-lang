@@ -17,6 +17,11 @@ html, body, #console {
 	height: 100%;
 }
 
+p {
+	margin-bottom: 6px;
+	margin-top: 0px;
+}
+
 #console {
 	display: flex;
 	flex-direction: column;

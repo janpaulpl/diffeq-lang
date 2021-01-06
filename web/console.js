@@ -7,15 +7,18 @@ $(function() {
 	$("#code-box").keyup(function(key) {
 		switch(key.which) {
 			case 13:
-				$(this).val($(this).val().replace(/[\n\r]/g, ""));
-				var result = main.run($(this).val());
+				var prog = $(this).val().replace(/[\n\r]/g, "");
+				$(this).val("");
+				
+				var result = main.run(prog);
 				console.log(result);
-				past.push($(this).val().replace(/[\n\r]/g, ""));
+				past.push(prog);
 				travel = past.length;
 				
-				$("#log").append(escape_input($(this).val()) + "<br />");
-				$("#log").append(escape_input(main.format(result)) + "<br />");
-				$(this).val("");
+				$("#log").append(`
+					<p>${escape_input(prog)}</p>
+					<p>${main.format(result)}</p>
+				`);
 				$("#log").scrollTop($("#log")[0].scrollHeight);
 				break;
 			case 38:
@@ -32,7 +35,6 @@ $(function() {
 				if(travel > past.length - 1) {
 					travel = past.length;
 					$(this).val("");
-					setTimeout(() => this.setSelectionRange(6, 6), 1);
 				} else {
 					$(this).val(past[travel]);
 					var length = $(this).val().length * 2;
