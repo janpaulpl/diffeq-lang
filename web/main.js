@@ -141,7 +141,7 @@ exports.__esModule = true;
 exports.compile = void 0;
 var types = require("./types");
 var prelude = "with(main.builtins) {\n\nlet st = [];\nlet out = [];\n";
-var postlude = "\n\nout;\n}";
+var postlude = "\n\nout = [...out, ...st];\nout;\n}";
 var builtins = ["print", "true", "false", "times", "range", "srange", "pi", "e", "sin", "cos", "tan"];
 function compile(ast) {
     return prelude + compile_rec(ast, 0, [], []) + postlude;
