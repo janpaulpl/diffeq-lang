@@ -5,7 +5,7 @@
 
 * {
 	font-family: FiraMono, Courier;
-	font-size: 16px;
+	font-size: 20px;
 	color: black;
 }
 
@@ -32,8 +32,7 @@ html, body, #console {
 
 #calc-header {
 	float: left;
-	padding: 2px;
-	padding-right: 0px;
+	padding: 4px;
 }
 
 #code-box {
@@ -41,13 +40,12 @@ html, body, #console {
 	background: #e6e6e6;
 	border: none;
 	outline: none;
-	padding: 2px;
-	padding-left: 0px;
+	padding: 4px;
 	flex-grow: 1;
 }
 
 #log {
-	padding: 2px;
+	padding: 4px;
 	background: white;
 	flex: 1;
 	position: relative;
