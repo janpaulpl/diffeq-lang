@@ -7,7 +7,7 @@ let st = [];
 let out = [];
 `;
 
-let postlude = "\nout;\n}";
+let postlude = "\n\nout;\n}";
 
 let builtins = ["print", "true", "false", "pi", "e", "sin", "cos", "tan"];
 

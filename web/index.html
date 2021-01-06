@@ -1,21 +1,24 @@
-<style>
-	body {margin: 0px;}
-</style>
+<!DOCTYPE html>
 
-<script src="main.js"></script>
-<script>
-	function run() {
-		let res = main.run(code_box.value);
-		console.log(res);
-		output_box.value = main.format(res);
-	}
-</script>
-
-<textarea id="code-box" cols="96" rows="32" placeholder="Program in here:" style="resize: none; display: block; margin: 0 auto;"></textarea>
-<button onclick="run()" style="resize: none; display: block; margin: 0 auto;">Run!</button>
-<textarea id="output-box" cols="96" rows="32" style="resize: none; display: block; margin: 0 auto;"></textarea>
-
-<script>
-	code_box = document.getElementById("code-box");
-	output_box = document.getElementById("output-box");
-</script>
+<html>
+	<head>
+		<title>calc=</title>
+		<meta charset="UTF-8" />
+		<link rel="stylesheet" href="style.css" />
+		
+		<script src="main.js"></script>
+		<script src="jQuery.js"></script>
+		<script src="console.js"></script>
+	</head>
+	<body>
+		<div id="console">
+			<div id="log"></div>
+			<div id="calcbox">
+			<textarea
+				id="calc"
+				spellcheck="false"
+				></textarea>
+			</div>
+		</div>
+	</body>
+</html>
