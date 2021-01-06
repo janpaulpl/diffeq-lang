@@ -1,16 +1,21 @@
 "use strict";
 
-var past = [""];
-var travel = 1;
+let past = [""];
+let travel = 1;
 
 $(function() {
 	$("#code-box").keyup(function(key) {
 		switch(key.which) {
 			case 13:
-				var prog = $(this).val().replace(/[\n\r]/g, "");
+				let prog = $(this).val().replace(/[\n\r]/g, "");
 				$(this).val("");
 				
-				var result = main.run(prog);
+				let result;
+				try {
+					result = main.run(prog);
+				} catch(err) {
+					result = [escape_input(main.err_to_str(err))];
+				}
 				console.log(result);
 				past.push(prog);
 				travel = past.length;
@@ -27,7 +32,7 @@ $(function() {
 					travel = 0;
 				}
 				$(this).val(past[travel]);
-				var length = $(this).val().length * 2;
+				let length = $(this).val().length * 2;
 				setTimeout(() => this.setSelectionRange(length, length), 1);
 				break;
 			case 40:
@@ -37,7 +42,7 @@ $(function() {
 					$(this).val("");
 				} else {
 					$(this).val(past[travel]);
-					var length = $(this).val().length * 2;
+					let length = $(this).val().length * 2;
 					setTimeout(() => this.setSelectionRange(length, length), 1);
 				}
 				break;

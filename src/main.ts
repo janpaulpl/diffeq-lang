@@ -10,4 +10,8 @@ function format(out: any[]): string {
 	return out.map(o => `<p>${o}</p>`).join("")
 }
 
-export {run, format, builtins};
+let err_to_str = (err: Error | string): string => !(err instanceof Error)
+	? err
+	: err.stack.split("\n").slice(0, 2).join("\n\t");
+
+export {run, format, err_to_str, builtins};

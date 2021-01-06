@@ -208,7 +208,7 @@ function tabs(indent) {
 
 },{"./types":5}],3:[function(require,module,exports){
 exports.__esModule = true;
-exports.builtins = exports.format = exports.run = void 0;
+exports.builtins = exports.err_to_str = exports.format = exports.run = void 0;
 var parser = require("./parser");
 var compiler = require("./compiler");
 var builtins = require("./builtins");
@@ -221,6 +221,10 @@ function format(out) {
     return out.map(function (o) { return "<p>" + o + "</p>"; }).join("");
 }
 exports.format = format;
+var err_to_str = function (err) { return !(err instanceof Error)
+    ? err
+    : err.stack.split("\n").slice(0, 2).join("\n\t"); };
+exports.err_to_str = err_to_str;
 
 },{"./builtins":1,"./compiler":2,"./parser":4}],4:[function(require,module,exports){
 var __spreadArrays = (this && this.__spreadArrays) || function () {
