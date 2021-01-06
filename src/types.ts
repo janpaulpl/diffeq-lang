@@ -1,7 +1,6 @@
 enum Instr_Type {
 	op, name, ref, ls, obj, prop, num, str, // Basic
-	if, for, while, local, var, fun, // Structures
-	cmmnt
+	if, for, while, local, var, fun // Structures
 }
 
 enum Op {
@@ -31,7 +30,6 @@ type Instr =
 	{type: Instr_Type.while, cond: Block, body: Block} |
 	{type: Instr_Type.local, var: string, def: Instrs, deriv_n: number} |
 	{type: Instr_Type.var, var: string, def: Instrs, deriv_n: number} |
-	{type: Instr_Type.fun, fun: string, args: string[], body: Block} |
-	{type: Instr_Type.cmmnt, data: string};
+	{type: Instr_Type.fun, fun: string, args: string[], body: Block};
 
 export {Instr_Type, Op, Block, Instrs, Instr};

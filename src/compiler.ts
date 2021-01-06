@@ -68,8 +68,6 @@ function compile_rec(
 			case types.Instr_Type.fun:
 				funcs = [...funcs, instr.fun];
 				return `function ${instr.fun}() {\n${instr.args.map(arg => `${tabs(indent + 1)}let ${arg} = st.pop();\n`).join("")}${compile_rec(instr.body, indent + 1, [...vars, ...instr.args], funcs)}\n${tabs(indent)}}`
-			case types.Instr_Type.cmmnt:
-				return `/*${instr.data}*/`;
 			default:
 				return "NOT OP;";
 		}

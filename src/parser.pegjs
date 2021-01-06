@@ -15,7 +15,6 @@ Instr
 	/ Num
 	/ Str
 	/ Expr
-	/ Cmmnt
 
 Keywd = If / For / While / Local / Var / Fun
 
@@ -112,6 +111,6 @@ Math_Func_3 = "sum" / "prod"
 
 Math_Const = "pi" / "π" / "tau" / "τ" / "e"
 
-Cmmnt = "#(" [^)]* ")" {return {type: types.Instr_Type.cmmnt, data: text().slice(2, -1)}}
+_ = ([ \t\n\r] / Cmmnt)*
 
-_ = [ \t\n\r]*
+Cmmnt = "#(" [^)]* ")"
