@@ -10,6 +10,16 @@ function __false(st: any[], out: any[]) {
 	st.push(false);
 }
 
+function __range(st: any[], out: any[]) {
+	let start = st.pop();
+	let stop = st.pop();
+	if(start <= stop) {
+		st.push(Array.from(new Array(stop - start), (_, i) => i + start));
+	} else {
+		st.push(Array.from(new Array(start - stop), (_, i) => start - i));
+	}
+}
+
 function __pi(st: any[], out: any[]) {
 	st.push(Math.PI);
 }
@@ -102,4 +112,4 @@ let __ops = {
 	// Nth previous one: "??"(st: any[], out: any[]) { }
 };
 
-export {__print, __true, __false, __pi, __e, __sin, __cos, __tan, __ops};
+export {__print, __true, __false, __range, __pi, __e, __sin, __cos, __tan, __ops};
