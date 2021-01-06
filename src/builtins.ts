@@ -64,6 +64,26 @@ let __ops = {
 		st.push(st.pop() == st.pop());
 	},
 	
+	"!="(st: any[], out: any[]) {
+		st.push(st.pop() != st.pop());
+	},
+	
+	"<="(st: any[], out: any[]) {
+		st.push(st.pop() <= st.pop());
+	},
+	
+	">="(st: any[], out: any[]) {
+		st.push(st.pop() >= st.pop());
+	},
+	
+	"<"(st: any[], out: any[]) {
+		st.push(st.pop() < st.pop());
+	},
+	
+	">"(st: any[], out: any[]) {
+		st.push(st.pop() > st.pop());
+	},
+	
 	// Arithmetic
 	
 	"+"(st: any[], out: any[]) {

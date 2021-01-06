@@ -62,6 +62,21 @@ var __ops = {
     "==": function (st, out) {
         st.push(st.pop() == st.pop());
     },
+    "!=": function (st, out) {
+        st.push(st.pop() != st.pop());
+    },
+    "<=": function (st, out) {
+        st.push(st.pop() <= st.pop());
+    },
+    ">=": function (st, out) {
+        st.push(st.pop() >= st.pop());
+    },
+    "<": function (st, out) {
+        st.push(st.pop() < st.pop());
+    },
+    ">": function (st, out) {
+        st.push(st.pop() > st.pop());
+    },
     // Arithmetic
     "+": function (st, out) {
         st.push(st.pop() + st.pop());
