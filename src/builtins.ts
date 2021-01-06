@@ -29,7 +29,10 @@ function __srange(st: any[], out: any[]) {
 	let start = st.pop();
 	let stop = st.pop();
 	let step = st.pop();
-	st.push(Array.from(new Array(Math.ceil((stop - start) / step)), (_, i) => i * step + start));
+	st.push(Array.from(
+		new Array(Math.ceil((stop - start) / step)),
+		(_, i) => i * step + start)
+	);
 }
 
 function __pi(st: any[], out: any[]) {
