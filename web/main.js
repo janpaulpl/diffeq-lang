@@ -1,6 +1,6 @@
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.main = f()}})(function(){var define,module,exports;return (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
 exports.__esModule = true;
-exports.__ops = exports.__tan = exports.__cos = exports.__sin = exports.__e = exports.__pi = exports.__range = exports.__false = exports.__true = exports.__print = void 0;
+exports.__ops = exports.__tan = exports.__cos = exports.__sin = exports.__e = exports.__pi = exports.__srange = exports.__range = exports.__times = exports.__false = exports.__true = exports.__print = void 0;
 function __print(st, out) {
     out.push(st.pop());
 }
@@ -13,6 +13,11 @@ function __false(st, out) {
     st.push(false);
 }
 exports.__false = __false;
+function __times(st, out) {
+    var times = st.pop();
+    st.push((new Array(times)).fill(0));
+}
+exports.__times = __times;
 function __range(st, out) {
     var start = st.pop();
     var stop = st.pop();
@@ -24,6 +29,13 @@ function __range(st, out) {
     }
 }
 exports.__range = __range;
+function __srange(st, out) {
+    var start = st.pop();
+    var stop = st.pop();
+    var step = st.pop();
+    st.push(Array.from(new Array(Math.ceil((stop - start) / step)), function (_, i) { return i * step + start; }));
+}
+exports.__srange = __srange;
 function __pi(st, out) {
     st.push(Math.PI);
 }
@@ -110,7 +122,7 @@ exports.compile = void 0;
 var types = require("./types");
 var prelude = "with(main.builtins) {\n\nlet st = [];\nlet out = [];\n";
 var postlude = "\n\nout;\n}";
-var builtins = ["print", "true", "false", "range", "pi", "e", "sin", "cos", "tan"];
+var builtins = ["print", "true", "false", "times", "range", "srange", "pi", "e", "sin", "cos", "tan"];
 function compile(ast) {
     return prelude + compile_rec(ast, 0, [], []) + postlude;
 }
