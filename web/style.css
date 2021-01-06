@@ -45,7 +45,7 @@ html, body, #console {
 }
 
 #log {
-	padding: 4px;
+	padding: 8px;
 	background: white;
 	flex: 1;
 	position: relative;
