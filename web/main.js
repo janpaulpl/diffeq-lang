@@ -162,7 +162,12 @@ function compile_rec(ast, indent, vars, funcs) {
                 else
                     throw instr.data + " is not a variable or function.";
             case types.Instr_Type.ref:
-                return "st.push(" + instr.data + ");";
+                if (vars.includes(instr.data) || funcs.includes(instr.data))
+                    return "st.push(" + instr.data + ");";
+                else if (builtins.includes(instr.data))
+                    return "st.push(__" + instr.data + ");";
+                else
+                    throw instr.data + " is not a variable or function.";
             case types.Instr_Type.ls:
                 return "st.push((() => {\n" + tabs(indent + 1) + "let st = [];\n" + compile_rec(instr.items, indent + 1, vars, funcs) + "\n" + tabs(indent + 1) + "return st.reverse();\n" + tabs(indent) + "})())";
             case types.Instr_Type.obj:
