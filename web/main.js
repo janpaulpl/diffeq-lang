@@ -33,7 +33,12 @@ function __srange(st, out) {
     var start = st.pop();
     var stop = st.pop();
     var step = st.pop();
-    st.push(Array.from(new Array(Math.ceil((stop - start) / step)), function (_, i) { return i * step + start; }));
+    if (stop - start < 0) {
+        st.push([]);
+    }
+    else {
+        st.push(Array.from(new Array(Math.ceil((stop - start) / step)), function (_, i) { return i * step + start; }));
+    }
 }
 exports.__srange = __srange;
 function __pi(st, out) {
