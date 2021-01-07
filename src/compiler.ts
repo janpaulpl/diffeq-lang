@@ -13,7 +13,10 @@ out = [...out, ...st];
 out;
 }`;
 
-let builtins = ["print", "true", "false", "times", "range", "srange", "pi", "e", "sin", "cos", "tan"];
+let builtins = [
+	"print", "true", "false", "times", "range", "srange", 
+	"pi", "e", "tau", 
+	"sin", "cos", "tan", "cot", "sec", "csc"];
 
 function compile(ast: types.Block): string {
 	return prelude + compile_rec(ast, 0, [], []) + postlude;

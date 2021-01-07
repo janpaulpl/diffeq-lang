@@ -1,5 +1,5 @@
 enum Instr_Type {
-	op, name, ref, ls, obj, prop, num, str, // Basic
+	op, name, ref, ls, obj, prop, num, str, expr, // Basic
 	if, for, while, local, var, fun // Structures
 }
 
@@ -11,6 +11,18 @@ enum Op {
 	"&", "|", "!", // Boolean
 	"??", "?" // Special interaction
 }
+
+enum Expr_Top_Type {single, eq}
+
+enum Expr_Type {
+	parens, call, const, main_vars, vars, num
+}
+
+enum Term_Op {"+", "-"}
+
+enum Prod_Op {"*", "/"}
+
+enum Main_Var {x, y}
 
 type Block = Instrs[];
 
@@ -25,11 +37,27 @@ type Instr =
 	{type: Instr_Type.prop, data: string} |
 	{type: Instr_Type.num, data: number} |
 	{type: Instr_Type.str, data: string} |
+	{type: Instr_Type.expr, data: Expr} |
 	{type: Instr_Type.if, branches: {cond: Block, body: Block | null}[]} |
 	{type: Instr_Type.for, var: string, iter: Block, body: Block} |
 	{type: Instr_Type.while, cond: Block, body: Block} |
 	{type: Instr_Type.local, var: string, def: Instrs, deriv_n: number} |
 	{type: Instr_Type.var, var: string, def: Instrs, deriv_n: number} |
 	{type: Instr_Type.fun, fun: string, args: string[], body: Block};
+
+type Expr =
+	{type: Expr_Top_Type.single, expr: Terms[]} |
+	{type: Expr_Top_Type.eq, left: Terms[], right: Terms[]};
+type Terms = {op: Term_Op, prod: Prods}[];
+type Prods = {op: Prod_Op, prod: Exps}[];
+type Exps = Final[];
+
+type Final =
+	{type: Expr_Type.parens, data: Terms[]} |
+	{type: Expr_Type.call, name: string, args: Terms[][]} |
+	{type: Expr_Type.const, data: number} |
+	{type: Expr_Type.main_vars, data: Main_Var} |
+	{type: Expr_Type.vars, data: string} |
+	{type: Expr_Type.num, data: number};
 
 export {Instr_Type, Op, Block, Instrs, Instr};
