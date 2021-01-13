@@ -122,10 +122,12 @@ var __ops = {
     },
     "!": function (st, out) {
         st.push(!(st.pop()));
-    }
+    },
     // Special interaction
     // Previous one: "?"(st: any[], out: any[]) { }
-    // Nth previous one: "??"(st: any[], out: any[]) { }
+    "??": function (st, out, res_hist) {
+        st.push(window.res_hist[st.pop()]);
+    }
 };
 exports.__ops = __ops;
 
@@ -162,7 +164,7 @@ function compile_rec(ast, indent, vars, funcs) {
                 else if (funcs.includes(instr.data))
                     return instr.data + "();";
                 else if (builtins.includes(instr.data))
-                    return "__" + instr.data + "(st, out);";
+                    return "__" + instr.data + "(st, out, res_hist);";
                 else
                     throw instr.data + " is not a variable or function.";
             case types.Instr_Type.ref:

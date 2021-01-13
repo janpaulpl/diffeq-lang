@@ -2,7 +2,7 @@
 
 let past = [""];
 let travel = 1;
-let res_hist = [];
+window.res_hist = [];
 let res_cou = 0;
 
 $(function() {

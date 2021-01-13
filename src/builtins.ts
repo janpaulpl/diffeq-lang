@@ -144,11 +144,13 @@ let __ops = {
 	
 	"!"(st: any[], out: any[]) {
 		st.push(!(st.pop()));
-	}
+	},
 	
 	// Special interaction
 	// Previous one: "?"(st: any[], out: any[]) { }
-	// Nth previous one: "??"(st: any[], out: any[]) { }
+	"??"(st: any[], out: any[], res_hist: any[]) {
+		st.push(window.res_hist[st.pop()]);
+	}
 };
 
 export {__print, __true, __false, __times, __range, __srange, __pi, __e, __sin, __cos, __tan, __ops};
