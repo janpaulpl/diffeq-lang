@@ -77,37 +77,63 @@ Str = '"' ([^"\\] / ("\\" .))* '"' {return {
 	data: text().slice(1, -1) // .replace("\\n", "\n").replace(/\\(.)/g, "$1")
 }}
 
-Expr = "{" _ Eq _ "}"
+Expr = "{" _ eq:Eq _ "}"
+	{return {type: Instr_Type.expr, data: eq}}
 
-Eq = Math_Expr (_ "=" _ Math_Expr)? _
+Eq = left:Terms (_ "=" _ right:Terms)? _
+	{return {!right
+		? {type: types.Expr_Top_Type.single, single: left}
+		: {type: types.Expr_Top_Type.eq, left, right}}}
 
-Math_Expr = Terms (_ [+\-] _ Terms)* _
+Terms = prod:Prods prods:(_ [+\-] _ Prods)* _
+	{return [
+		{op: Term_Op["+"], prod},
+		...prods.map(([_, op, _, prod]) => {
+			op: op == "+" ? Term_Op["+"] : Term_Op["-"],
+			prod
+		})
+	]}
 
-Terms = Prods (_ [*/]? _ Prods)* _
+Prods = exp:Exps exps:(_ [*/]? _ Exps)* _
+	{return [
+		{op: Prod_Op["*"], exp},
+		...exps.map(([_, op, _, exp]) => {
+			op: op == "*" ? Prod_Op["*"] : Prod_Op["/"],
+			exp
+		})
+	]}
 
-Prods = Final (_ "^" _ Final)* _
+Exps = final:Final finals:(_ "^" _ Final)* _
+	{return [
+		final, ...finals.map(([_, "^", _, final]) => {final})
+	]}
 
 Final
-	= "(" _ Math_Expr _ ")"
-	/ Math_Call
-	/ Math_Const
-	/ "x" / "y"
-	/ [a-wz]
-	/ Num
+	= "~" (
+		"(" _ Terms _ ")" /
+		Math_Call /
+		Math_Const /
+		Main_Vars /
+		Vars /
+		Num)
+
+Main_Vars = "x" / "y"
+
+Vars = [a-wz]
 
 Math_Call
-	= Math_Func_1 _ "(" _ Math_Expr _ ")"
-	/ Math_Func_2 _ "(" _ Math_Expr _ "," _ Math_Expr _ ")"
-	/ Math_Func_3 _ "(" _ Math_Expr _ "," _ Math_Expr _ "," _ Math_Expr _ ")"
+	= Math_Fun_1 _ "(" _ Terms _ ")"
+	/ Math_Fun_2 _ "(" _ Terms _ "," _ Terms _ ")"
+	/ Math_Fun_3 _ "(" _ Terms _ "," _ Terms _ "," _ Terms _ ")"
 
-Math_Func_1 = (
+Math_Fun_1 = (
 	"abs" / "sqrt" / "cbrt" / "ln" /
 	"cosh" / "sinh" / "tanh" / "coth" / "sech" / "csch" /
 	"cos" / "sin" / "tan" / "cot" / "sec" / "csc" /
 	"arccosh" / "arcsinh" / "arctanh" / "arccoth" / "arcsech" / "arccsch" /
 	"arccos" / "arcsin" / "arctan" / "arccot" / "arcsec" / "arccsc")
-Math_Func_2 = "root" / "log"
-Math_Func_3 = "sum" / "prod"
+Math_Fun_2 = "root" / "log"
+Math_Fun_3 = "sum" / "prod"
 
 Math_Const = "pi" / "π" / "tau" / "τ" / "e"
 
