@@ -228,9 +228,21 @@ function run(prog) {
 }
 exports.run = run;
 function format(out) {
-    return out.map(function (o) { return "<p>" + o + "</p>"; }).join("");
+    return out.map(function (o) { return "<p>" + stringify(o) + "</p>"; }).join("");
 }
 exports.format = format;
+function stringify(obj) {
+    var obj_type = to_type(obj);
+    if (obj_type == "number" || obj_type == "string") {
+        return obj.toString();
+    }
+    else if (obj_type == "array") {
+        return "[" + obj.map(stringify).join(" ") + "]";
+    }
+}
+function to_type(obj) {
+    return ({}).toString.call(obj).match(/\s([a-zA-Z]+)/)[1].toLowerCase();
+}
 var err_to_str = function (err) { return !(err instanceof Error)
     ? err
     : err.stack.split("\n").slice(0, 2).join("\n\t"); };
