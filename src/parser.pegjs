@@ -78,38 +78,38 @@ Str = '"' ([^"\\] / ("\\" .))* '"' {return {
 }}
 
 Expr = "{" _ eq:Eq _ "}"
-	{return {type: Instr_Type.expr, data: eq}}
+	{return {type: types.Instr_Type.expr, data: eq}}
 
-Eq = left:Terms (_ "=" _ right:Terms)? _
-	{return {!right
+Eq = left:Terms right:(_ "=" _ Terms)? _
+	{return !right
 		? {type: types.Expr_Top_Type.single, single: left}
-		: {type: types.Expr_Top_Type.eq, left, right}}}
+		: {type: types.Expr_Top_Type.eq, left, right}}
 
 Terms = prod:Prods prods:(_ [+\-] _ Prods)* _
 	{return [
-		{op: Term_Op["+"], prod},
-		...prods.map(([_, op, _, prod]) => {
-			op: op == "+" ? Term_Op["+"] : Term_Op["-"],
+		{op: types.Term_Op["+"], prod},
+		...prods.map(([, op, , prod]) => {
+			op: op == "+" ? types.Term_Op["+"] : types.Term_Op["-"],
 			prod
 		})
 	]}
 
 Prods = exp:Exps exps:(_ [*/]? _ Exps)* _
 	{return [
-		{op: Prod_Op["*"], exp},
-		...exps.map(([_, op, _, exp]) => {
-			op: op == "*" ? Prod_Op["*"] : Prod_Op["/"],
+		{op: types.Prod_Op["*"], exp},
+		...exps.map(([, op, , exp]) => {
+			op: op == "*" ? types.Prod_Op["*"] : types.Prod_Op["/"],
 			exp
 		})
 	]}
 
 Exps = final:Final finals:(_ "^" _ Final)* _
 	{return [
-		final, ...finals.map(([_, "^", _, final]) => {final})
+		final, ...finals.map(([, , , final]) => final)
 	]}
 
 Final
-	= "~" (
+	= "~"? (
 		"(" _ Terms _ ")" /
 		Math_Call /
 		Math_Const /

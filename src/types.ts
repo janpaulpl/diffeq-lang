@@ -60,4 +60,4 @@ type Final =
 	{type: Expr_Type.vars, data: string} |
 	{type: Expr_Type.num, data: number};
 
-export {Instr_Type, Op, Block, Instrs, Instr};
+export {Instr_Type, Op, Expr_Top_Type, Expr_Type, Term_Op, Prod_Op, Main_Var, Block, Instrs, Instr};
