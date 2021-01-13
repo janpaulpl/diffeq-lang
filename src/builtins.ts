@@ -148,7 +148,7 @@ let __ops = {
 	
 	// Special interaction
 	// Previous one: "?"(st: any[], out: any[]) { }
-	"??"(st: any[], out: any[], res_hist: any[]) {
+	"??"(st: any[], out: any[]) {
 		st.push(window.res_hist[st.pop()]);
 	}
 };
