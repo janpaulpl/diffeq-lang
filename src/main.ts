@@ -7,7 +7,11 @@ function run(prog: string): any[] {
 }
 
 function format(out: any[]): string {
-	return out.map(o => `<p>${stringify(o)}</p>`).join("")
+	let str = out.map(o => `<p>${stringify(o)} <button>Tst</button> </p>`).join("");
+	if(out.length > 1) {
+		str = "<button>Exa</button>" + str;
+	}
+	return str;
 }
 
 function stringify(obj: any): string {
@@ -20,7 +24,7 @@ function stringify(obj: any): string {
 }
 
 function to_type(obj: any): string {
-  return ({}).toString.call(obj).match(/\s([a-zA-Z]+)/)[1].toLowerCase()
+  return ({}).toString.call(obj).match(/\s([a-zA-Z]+)/)[1].toLowerCase();
 }
 
 let err_to_str = (err: Error | string): string => !(err instanceof Error)

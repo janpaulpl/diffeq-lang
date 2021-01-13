@@ -232,7 +232,11 @@ function run(prog) {
 }
 exports.run = run;
 function format(out) {
-    return out.map(function (o) { return "<p>" + stringify(o) + "</p>"; }).join("");
+    var str = out.map(function (o) { return "<p>" + stringify(o) + " <button>Tst</button> </p>"; }).join("");
+    if (out.length > 1) {
+        str = "<button>Exa</button>" + str;
+    }
+    return str;
 }
 exports.format = format;
 function stringify(obj) {
