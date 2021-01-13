@@ -2,6 +2,8 @@
 
 let past = [""];
 let travel = 1;
+let res_hist = [];
+let res_cou = 0;
 
 $(function() {
 	$("#code-box").keyup(function(key) {
@@ -22,7 +24,7 @@ $(function() {
 				
 				$("#log").append(`
 					<p class="user-code-repeat">${escape_input(prog)}</p>
-					${main.format(result)}
+					${format(result)}
 				`);
 				$("#log").scrollTop($("#log")[0].scrollHeight);
 				break;
@@ -63,4 +65,32 @@ function escape_input(string) {
 		.replace(/'/g, "&apos;")
 		.replace(/\t/g, "&nbsp;&nbsp;&nbsp;&nbsp;")
 		.replace(/\n/g, "<br />");
+}
+
+function format(out) {
+	let str = "";
+	
+	if(out.length > 1) {
+		str = `<button onclick="alert(${res_cou++})">Exa</button>`;
+		res_hist.push(out);
+	}
+	
+	str += out.map(o => `<p>${stringify(o)} <button onclick="alert(${res_cou++})">Tst</button> </p>`).join("");
+	for(let obj of out)
+		res_hist.push(obj);
+	
+	return str;
+}
+
+function stringify(obj) {
+	let obj_type = to_type(obj);
+	if(obj_type == "number" || obj_type == "string") {
+		return obj.toString();
+	} else if(obj_type == "array") {
+		return `[${obj.map(stringify).join(" ")}]`;
+	}
+}
+
+function to_type(obj) {
+  return ({}).toString.call(obj).match(/\s([a-zA-Z]+)/)[1].toLowerCase();
 }

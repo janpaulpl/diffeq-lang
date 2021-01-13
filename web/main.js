@@ -222,7 +222,7 @@ function tabs(indent) {
 
 },{"./types":5}],3:[function(require,module,exports){
 exports.__esModule = true;
-exports.builtins = exports.err_to_str = exports.format = exports.run = void 0;
+exports.builtins = exports.err_to_str = exports.run = void 0;
 var parser = require("./parser");
 var compiler = require("./compiler");
 var builtins = require("./builtins");
@@ -231,26 +231,6 @@ function run(prog) {
     return eval(compiler.compile(parser.parse(prog)));
 }
 exports.run = run;
-function format(out) {
-    var str = out.map(function (o) { return "<p>" + stringify(o) + " <button>Tst</button> </p>"; }).join("");
-    if (out.length > 1) {
-        str = "<button>Exa</button>" + str;
-    }
-    return str;
-}
-exports.format = format;
-function stringify(obj) {
-    var obj_type = to_type(obj);
-    if (obj_type == "number" || obj_type == "string") {
-        return obj.toString();
-    }
-    else if (obj_type == "array") {
-        return "[" + obj.map(stringify).join(" ") + "]";
-    }
-}
-function to_type(obj) {
-    return ({}).toString.call(obj).match(/\s([a-zA-Z]+)/)[1].toLowerCase();
-}
 var err_to_str = function (err) { return !(err instanceof Error)
     ? err
     : err.stack.split("\n").slice(0, 2).join("\n\t"); };
