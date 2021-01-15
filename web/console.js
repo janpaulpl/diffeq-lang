@@ -2,8 +2,9 @@
 
 let past = [""];
 let travel = 1;
-window.res_hist = [];
+window.vars = {};
 window.funs = {};
+window.res_hist = [];
 let res_cou = 0;
 
 $(function() {

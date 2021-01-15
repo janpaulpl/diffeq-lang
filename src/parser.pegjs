@@ -31,10 +31,10 @@ For = "for" _ var_:Name _ iter:Block _ ":" _ body:Block "end"?
 While = "while" _ cond:Block _ ":" _ body:Block "end"?
 	{return {type: types.Instr_Type.while, cond, body}}
 
-Local = var_:Name deriv:"'"* _ ":=" _ def:Instrs _ ";"?
+Local = var_:Name deriv:"'"* _ ":=" _ def:Instrs
 	{return {type: types.Instr_Type.local, var: var_.data, def, deriv_n: deriv.length}}
 
-Var = var_:Name deriv:"'"* _ "=" _ def:Instrs _ ";"?
+Var = var_:Name deriv:"'"* _ "=" _ def:Instrs
 	{return {type: types.Instr_Type.var, var: var_.data, def, deriv_n: deriv.length}}
 
 Fun = "fun" _ fun:Name _ args:(Name _)* ":" _ body:Block _ "end"?

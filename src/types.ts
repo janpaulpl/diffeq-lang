@@ -1,5 +1,6 @@
 declare global {
 	interface Window {
+		vars: {[name: string]: any};
 		funs: {[name: string]: (st: any[], out: any[]) => void};
 		res_hist: any[];
 	}
