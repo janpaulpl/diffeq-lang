@@ -3,6 +3,7 @@
 let past = [""];
 let travel = 1;
 window.res_hist = [];
+window.funs = {};
 let res_cou = 0;
 
 $(function() {

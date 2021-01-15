@@ -1,3 +1,10 @@
+declare global {
+	interface Window {
+		funs: {[name: string]: () => void};
+		res_hist: any[];
+	}
+}
+
 enum Instr_Type {
 	op, name, ref, ls, obj, prop, num, str, expr, // Basic
 	if, for, while, local, var, fun // Structures

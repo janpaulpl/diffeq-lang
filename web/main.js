@@ -165,33 +165,37 @@ function compile(ast) {
     return prelude + compile_rec(ast, 0, [], []) + postlude;
 }
 exports.compile = compile;
-function compile_rec(ast, indent, vars, funcs) {
+function compile_rec(ast, indent, vars, funs) {
     var compiled = ast.map(function (instrs) { return instrs.map(function (instr) {
         switch (instr.type) {
             case types.Instr_Type.op:
                 return "__ops[\"" + types.Op[instr.data] + "\"](st, out);";
             case types.Instr_Type.name:
+                if (instr.data == "debug")
+                    return "debugger;";
                 if (vars.includes(instr.data))
                     return "st.push(" + instr.data + ");";
-                else if (funcs.includes(instr.data))
-                    return instr.data + "();";
+                else if (funs.includes(instr.data) || instr.data in window.funs)
+                    return "window.funs." + instr.data + "();";
                 else if (builtins.includes(instr.data))
                     return "__" + instr.data + "(st, out);";
                 else
                     throw instr.data + " is not a variable or function.";
             case types.Instr_Type.ref:
-                if (vars.includes(instr.data) || funcs.includes(instr.data))
+                if (vars.includes(instr.data))
                     return "st.push(" + instr.data + ");";
+                else if (funs.includes(instr.data) || instr.data in window.funs)
+                    return "st.push(window.funs." + instr.data + ");";
                 else if (builtins.includes(instr.data))
                     return "st.push(__" + instr.data + ");";
                 else
                     throw instr.data + " is not a variable or function.";
             case types.Instr_Type.ls:
-                return "st.push((() => {\n" + tabs(indent + 1) + "let st = [];\n" + compile_rec(instr.items, indent + 1, vars, funcs) + "\n" + tabs(indent + 1) + "return st.reverse();\n" + tabs(indent) + "})())";
+                return "st.push((() => {\n" + tabs(indent + 1) + "let st = [];\n" + compile_rec(instr.items, indent + 1, vars, funs) + "\n" + tabs(indent + 1) + "return st.reverse();\n" + tabs(indent) + "})())";
             case types.Instr_Type.obj:
                 return "st.push({\n" + instr.pairs.map(function (_a) {
                     var key = _a.key, value = _a.value;
-                    return "" + tabs(indent + 1) + key + ": (() => {\n" + compile_rec(value, indent + 2, vars, funcs) + "\n" + tabs(indent + 2) + "return st.pop();\n" + tabs(indent + 1) + "})()";
+                    return "" + tabs(indent + 1) + key + ": (() => {\n" + compile_rec(value, indent + 2, vars, funs) + "\n" + tabs(indent + 2) + "return st.pop();\n" + tabs(indent + 1) + "})()";
                 }).join(",\n") + "\n" + tabs(indent) + "});";
             case types.Instr_Type.prop:
                 return "st.push(st.pop()." + instr.data + ");";
@@ -202,24 +206,24 @@ function compile_rec(ast, indent, vars, funcs) {
             case types.Instr_Type["if"]:
                 return instr.branches.map(function (branch) {
                     return (branch.cond
-                        ? "if((() => {\n" + compile_rec(branch.cond, indent + 2, vars, funcs) + "\n" + tabs(indent + 2) + "return st.pop();\n" + tabs(indent + 1) + "})()) "
-                        : "") + "{\n" + compile_rec(branch.body, indent + 1, vars, funcs) + "\n" + tabs(indent) + "}";
+                        ? "if((() => {\n" + compile_rec(branch.cond, indent + 2, vars, funs) + "\n" + tabs(indent + 2) + "return st.pop();\n" + tabs(indent + 1) + "})()) "
+                        : "") + "{\n" + compile_rec(branch.body, indent + 1, vars, funs) + "\n" + tabs(indent) + "}";
                 }).join(" else ");
             case types.Instr_Type["for"]:
-                return "for(const " + instr["var"] + " of (() => {\n" + compile_rec(instr.iter, indent + 2, vars, funcs) + "\n" + tabs(indent + 2) + "return st.pop();\n" + tabs(indent + 1) + "})()) {\n" + compile_rec(instr.body, indent + 1, __spreadArrays(vars, [instr["var"]]), funcs) + "\n" + tabs(indent) + "}";
+                return "for(const " + instr["var"] + " of (() => {\n" + compile_rec(instr.iter, indent + 2, vars, funs) + "\n" + tabs(indent + 2) + "return st.pop();\n" + tabs(indent + 1) + "})()) {\n" + compile_rec(instr.body, indent + 1, __spreadArrays(vars, [instr["var"]]), funs) + "\n" + tabs(indent) + "}";
             case types.Instr_Type["while"]:
-                return "while((() => {\n" + compile_rec(instr.cond, indent + 2, vars, funcs) + "\n" + tabs(indent + 2) + "return st.pop();\n" + tabs(indent + 1) + "})()) {\n" + compile_rec(instr.body, indent + 1, vars, funcs) + "\n" + tabs(indent) + "}";
+                return "while((() => {\n" + compile_rec(instr.cond, indent + 2, vars, funs) + "\n" + tabs(indent + 2) + "return st.pop();\n" + tabs(indent + 1) + "})()) {\n" + compile_rec(instr.body, indent + 1, vars, funs) + "\n" + tabs(indent) + "}";
             // Add deriv.
             case types.Instr_Type.local:
                 vars = __spreadArrays(vars, [instr["var"]]);
-                return "let " + instr["var"] + " = (() => {\n" + compile_rec([instr.def], indent + 1, vars, funcs) + "\n" + tabs(indent + 1) + "return st.pop();\n" + tabs(indent) + "})();";
+                return "let " + instr["var"] + " = (() => {\n" + compile_rec([instr.def], indent + 1, vars, funs) + "\n" + tabs(indent + 1) + "return st.pop();\n" + tabs(indent) + "})();";
             case types.Instr_Type["var"]:
                 if (!vars.includes(instr["var"]))
                     vars = __spreadArrays(vars, [instr["var"]]);
-                return instr["var"] + " = (() => {\n" + compile_rec([instr.def], indent + 1, vars, funcs) + "\n" + tabs(indent + 1) + "return st.pop();\n" + tabs(indent) + "})();";
+                return instr["var"] + " = (() => {\n" + compile_rec([instr.def], indent + 1, vars, funs) + "\n" + tabs(indent + 1) + "return st.pop();\n" + tabs(indent) + "})();";
             case types.Instr_Type.fun:
-                funcs = __spreadArrays(funcs, [instr.fun]);
-                return "function " + instr.fun + "() {\n" + instr.args.map(function (arg) { return tabs(indent + 1) + "let " + arg + " = st.pop();\n"; }).join("") + compile_rec(instr.body, indent + 1, __spreadArrays(vars, instr.args), funcs) + "\n" + tabs(indent) + "}";
+                funs = __spreadArrays(funs, [instr.fun]);
+                return "window.funs." + instr.fun + " = () => {\n" + instr.args.map(function (arg) { return tabs(indent + 1) + "let " + arg + " = st.pop();\n"; }).join("") + compile_rec(instr.body, indent + 1, __spreadArrays(vars, instr.args), funs) + "\n" + tabs(indent) + "}";
             default:
                 return "NOT OP;";
         }
