@@ -1,6 +1,6 @@
 declare global {
 	interface Window {
-		funs: {[name: string]: () => void};
+		funs: {[name: string]: (st: any[], out: any[]) => void};
 		res_hist: any[];
 	}
 }
