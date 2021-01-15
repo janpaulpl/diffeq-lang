@@ -36,7 +36,7 @@ function compile_rec(
 				if(vars.includes(instr.data))
 					return `st.push(${instr.data});`;
 				else if(funs.includes(instr.data) || instr.data in window.funs)
-					return `window.funs.${instr.data}();`;
+					return `window.funs.${instr.data}(st, out);`;
 				else if(builtins.includes(instr.data))
 					return `__${instr.data}(st, out);`;
 				else
@@ -83,7 +83,7 @@ function compile_rec(
 				return `${instr.var} = (() => {\n${compile_rec([instr.def], indent + 1, vars, funs)}\n${tabs(indent + 1)}return st.pop();\n${tabs(indent)}})();`;
 			case types.Instr_Type.fun:
 				funs = [...funs, instr.fun];
-				return `window.funs.${instr.fun} = () => {\n${instr.args.map(arg => `${tabs(indent + 1)}let ${arg} = st.pop();\n`).join("")}${compile_rec(instr.body, indent + 1, [...vars, ...instr.args], funs)}\n${tabs(indent)}}`
+				return `window.funs.${instr.fun} = (st, out) => {\n${instr.args.map(arg => `${tabs(indent + 1)}let ${arg} = st.pop();\n`).join("")}${compile_rec(instr.body, indent + 1, [...vars, ...instr.args], funs)}\n${tabs(indent)}}`
 			default:
 				return "NOT OP;";
 		}

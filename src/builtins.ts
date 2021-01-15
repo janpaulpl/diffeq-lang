@@ -10,12 +10,12 @@ function __false(st: any[], out: any[]) {
 	st.push(false);
 }
 
-function __map(st: any[]) {
+function __map(st: any[], out: any[]) {
 	let fun = st.pop();
 	let list = st.pop();
 	st.push(list.map(obj => {
 		st.push(obj);
-		fun();
+		fun(st, out);
 		return st.pop();
 	}));
 }
