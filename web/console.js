@@ -18,7 +18,7 @@ $(function() {
 				} catch(err) {
 					result = [escape_input(main.err_to_str(err))];
 				}
-				console.log(result);
+				
 				past.push(prog);
 				travel = past.length;
 				
