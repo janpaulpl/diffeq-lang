@@ -20,6 +20,10 @@ html, body, #console {
 p {
 	margin-bottom: 6px;
 	margin-top: 0px;
+	margin-left: 0px;
+}
+
+.indented {
 	margin-left: 32px;
 }
 

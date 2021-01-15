@@ -73,11 +73,11 @@ function format(out) {
 	let str = "";
 	
 	if(out.length > 1) {
-		str = `<button onclick="$('#code-box').val($('#code-box').val() + '??' + (${res_cou++}).toString())">Get all</button>`;
+		str = `<p> <button onclick="$('#code-box').val($('#code-box').val() + '??' + (${res_cou++}).toString())">Get all</button> </p>`;
 		res_hist.push(out);
 	}
 	
-	str += out.map(o => `<p>${stringify(o)} <button onclick="$('#code-box').val($('#code-box').val() + '??' + (${res_cou++}).toString())">Get</button> </p>`).join("");
+	str += out.map(o => `<p class="indented">${stringify(o)} <button onclick="$('#code-box').val($('#code-box').val() + '??' + (${res_cou++}).toString())">Get</button> </p>`).join("");
 	for(let obj of out)
 		res_hist.push(obj);
 	
