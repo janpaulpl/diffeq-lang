@@ -14,7 +14,7 @@ out;
 }`;
 
 let builtins = [
-	"print", "true", "false", "times", "range", "srange", 
+	"print", "true", "false", "map", "times", "range", "srange", 
 	"pi", "e", "tau", 
 	"sin", "cos", "tan", "cot", "sec", "csc"];
 

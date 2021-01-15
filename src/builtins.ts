@@ -10,6 +10,16 @@ function __false(st: any[], out: any[]) {
 	st.push(false);
 }
 
+function __map(st: any[]) {
+	let fun = st.pop();
+	let list = st.pop();
+	st.push(list.map(obj => {
+		st.push(obj);
+		fun();
+		return st.pop();
+	}));
+}
+
 function __times(st: any[], out: any[]) {
 	let times = st.pop();
 	st.push((new Array(times)).fill(0));
@@ -156,4 +166,4 @@ let __ops = {
 	}
 };
 
-export {__print, __true, __false, __times, __range, __srange, __pi, __e, __sin, __cos, __tan, __ops};
+export {__print, __true, __false, __map, __times, __range, __srange, __pi, __e, __sin, __cos, __tan, __ops};
