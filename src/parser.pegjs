@@ -14,6 +14,7 @@ Instr
 	/ Prop
 	/ Num
 	/ Str
+	/ Super_Str
 	/ Expr
 
 Keywd = If / For / While / Local / Var / Fun
@@ -74,7 +75,12 @@ Num = [0-9]+ ("." [0-9]+)?
 
 Str = '"' ([^"\\] / ("\\" .))* '"' {return {
 	type: types.Instr_Type.str,
-	data: text().slice(1, -1) // .replace("\\n", "\n").replace(/\\(.)/g, "$1")
+	data: text().slice(1, -1) // .replace(/\\n/g, "\n").replace(/\\(.)/g, "$1")
+}}
+
+Super_Str = "\\" .* {return {
+	type: types.Instr_Type.str,
+	data: text().slice(1).replace(/\\/g, "\\\\").replace(/`/g, "\\`").replace(/\$/g, "\\$")
 }}
 
 Expr = "{" _ eq:Eq _ "}"
