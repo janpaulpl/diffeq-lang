@@ -55,9 +55,9 @@ function compile_rec(
 				else
 					throw `${instr.data} is not a variable or function.`;
 			case types.Instr_Type.ls:
-				return `st.push((() => {\n${tabs(indent + 1)}let st = [];\n${compile_rec(instr.items, indent + 1, locals, vars, funs)}\n${tabs(indent + 1)}return st.reverse();\n${tabs(indent)}})())`;
+				return `st.push((() => {\n${tabs(indent + 1)}let st = [];\n${compile_rec([instr.items], indent + 1, locals, vars, funs)}\n${tabs(indent + 1)}return st.reverse();\n${tabs(indent)}})())`;
 			case types.Instr_Type.obj:
-				return `st.push({\n${instr.pairs.map(({key, value}) => `${tabs(indent + 1)}${key}: (() => {\n${compile_rec(value, indent + 2, locals, vars, funs)}\n${tabs(indent + 2)}return st.pop();\n${tabs(indent + 1)}})()`).join(",\n")}\n${tabs(indent)}});`;
+				return `st.push({\n${instr.pairs.map(({key, value}) => `${tabs(indent + 1)}${key}: (() => {\n${compile_rec([value], indent + 2, locals, vars, funs)}\n${tabs(indent + 2)}return st.pop();\n${tabs(indent + 1)}})()`).join(",\n")}\n${tabs(indent)}});`;
 			case types.Instr_Type.prop:
 				return `st.push(st.pop().${instr.data});`;
 			case types.Instr_Type.num:
@@ -68,14 +68,14 @@ function compile_rec(
 				return instr.branches.map(branch =>
 					`${
 						branch.cond
-							? `if((() => {\n${compile_rec(branch.cond, indent + 2, locals, vars, funs)}\n${tabs(indent + 2)}return st.pop();\n${tabs(indent + 1)}})()) `
+							? `if((() => {\n${compile_rec([branch.cond], indent + 2, locals, vars, funs)}\n${tabs(indent + 2)}return st.pop();\n${tabs(indent + 1)}})()) `
 							: ""
 					}{\n${compile_rec(branch.body, indent + 1, locals, vars, funs)}\n${tabs(indent)}}`
 				).join(" else ");
 			case types.Instr_Type.for:
-				return `for(const ${instr.var} of (() => {\n${compile_rec(instr.iter, indent + 2, locals, vars, funs)}\n${tabs(indent + 2)}return st.pop();\n${tabs(indent + 1)}})()) {\n${compile_rec(instr.body, indent + 1, [...locals, instr.var], vars, funs)}\n${tabs(indent)}}`;
+				return `for(const ${instr.var} of (() => {\n${compile_rec([instr.iter], indent + 2, locals, vars, funs)}\n${tabs(indent + 2)}return st.pop();\n${tabs(indent + 1)}})()) {\n${compile_rec(instr.body, indent + 1, [...locals, instr.var], vars, funs)}\n${tabs(indent)}}`;
 			case types.Instr_Type.while:
-				return `while((() => {\n${compile_rec(instr.cond, indent + 2, locals, vars, funs)}\n${tabs(indent + 2)}return st.pop();\n${tabs(indent + 1)}})()) {\n${compile_rec(instr.body, indent + 1, locals, vars, funs)}\n${tabs(indent)}}`;
+				return `while((() => {\n${compile_rec([instr.cond], indent + 2, locals, vars, funs)}\n${tabs(indent + 2)}return st.pop();\n${tabs(indent + 1)}})()) {\n${compile_rec(instr.body, indent + 1, locals, vars, funs)}\n${tabs(indent)}}`;
 			
 			// Add deriv.
 			case types.Instr_Type.local:

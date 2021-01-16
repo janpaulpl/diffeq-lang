@@ -195,11 +195,11 @@ function compile_rec(ast, indent, locals, vars, funs) {
                 else
                     throw instr.data + " is not a variable or function.";
             case types.Instr_Type.ls:
-                return "st.push((() => {\n" + tabs(indent + 1) + "let st = [];\n" + compile_rec(instr.items, indent + 1, locals, vars, funs) + "\n" + tabs(indent + 1) + "return st.reverse();\n" + tabs(indent) + "})())";
+                return "st.push((() => {\n" + tabs(indent + 1) + "let st = [];\n" + compile_rec([instr.items], indent + 1, locals, vars, funs) + "\n" + tabs(indent + 1) + "return st.reverse();\n" + tabs(indent) + "})())";
             case types.Instr_Type.obj:
                 return "st.push({\n" + instr.pairs.map(function (_a) {
                     var key = _a.key, value = _a.value;
-                    return "" + tabs(indent + 1) + key + ": (() => {\n" + compile_rec(value, indent + 2, locals, vars, funs) + "\n" + tabs(indent + 2) + "return st.pop();\n" + tabs(indent + 1) + "})()";
+                    return "" + tabs(indent + 1) + key + ": (() => {\n" + compile_rec([value], indent + 2, locals, vars, funs) + "\n" + tabs(indent + 2) + "return st.pop();\n" + tabs(indent + 1) + "})()";
                 }).join(",\n") + "\n" + tabs(indent) + "});";
             case types.Instr_Type.prop:
                 return "st.push(st.pop()." + instr.data + ");";
@@ -210,13 +210,13 @@ function compile_rec(ast, indent, locals, vars, funs) {
             case types.Instr_Type["if"]:
                 return instr.branches.map(function (branch) {
                     return (branch.cond
-                        ? "if((() => {\n" + compile_rec(branch.cond, indent + 2, locals, vars, funs) + "\n" + tabs(indent + 2) + "return st.pop();\n" + tabs(indent + 1) + "})()) "
+                        ? "if((() => {\n" + compile_rec([branch.cond], indent + 2, locals, vars, funs) + "\n" + tabs(indent + 2) + "return st.pop();\n" + tabs(indent + 1) + "})()) "
                         : "") + "{\n" + compile_rec(branch.body, indent + 1, locals, vars, funs) + "\n" + tabs(indent) + "}";
                 }).join(" else ");
             case types.Instr_Type["for"]:
-                return "for(const " + instr["var"] + " of (() => {\n" + compile_rec(instr.iter, indent + 2, locals, vars, funs) + "\n" + tabs(indent + 2) + "return st.pop();\n" + tabs(indent + 1) + "})()) {\n" + compile_rec(instr.body, indent + 1, __spreadArrays(locals, [instr["var"]]), vars, funs) + "\n" + tabs(indent) + "}";
+                return "for(const " + instr["var"] + " of (() => {\n" + compile_rec([instr.iter], indent + 2, locals, vars, funs) + "\n" + tabs(indent + 2) + "return st.pop();\n" + tabs(indent + 1) + "})()) {\n" + compile_rec(instr.body, indent + 1, __spreadArrays(locals, [instr["var"]]), vars, funs) + "\n" + tabs(indent) + "}";
             case types.Instr_Type["while"]:
-                return "while((() => {\n" + compile_rec(instr.cond, indent + 2, locals, vars, funs) + "\n" + tabs(indent + 2) + "return st.pop();\n" + tabs(indent + 1) + "})()) {\n" + compile_rec(instr.body, indent + 1, locals, vars, funs) + "\n" + tabs(indent) + "}";
+                return "while((() => {\n" + compile_rec([instr.cond], indent + 2, locals, vars, funs) + "\n" + tabs(indent + 2) + "return st.pop();\n" + tabs(indent + 1) + "})()) {\n" + compile_rec(instr.body, indent + 1, locals, vars, funs) + "\n" + tabs(indent) + "}";
             // Add deriv.
             case types.Instr_Type.local:
                 if (!locals.includes(instr["var"]))
@@ -255,7 +255,9 @@ var compiler = require("./compiler");
 var builtins = require("./builtins");
 exports.builtins = builtins;
 function run(prog) {
-    return eval(compiler.compile(parser.parse(prog)));
+    var comp = compiler.compile(parser.parse(prog));
+    console.log(comp);
+    return eval(comp);
 }
 exports.run = run;
 var err_to_str = function (err) { return !(err instanceof Error)
@@ -773,7 +775,7 @@ function peg$parse(input, options) {
         if (s1 !== peg$FAILED) {
             s2 = peg$parse_();
             if (s2 !== peg$FAILED) {
-                s3 = peg$parseBlock();
+                s3 = peg$parseInstrs();
                 if (s3 !== peg$FAILED) {
                     s4 = peg$parse_();
                     if (s4 !== peg$FAILED) {
@@ -809,7 +811,7 @@ function peg$parse(input, options) {
                                         if (s11 !== peg$FAILED) {
                                             s12 = peg$parse_();
                                             if (s12 !== peg$FAILED) {
-                                                s13 = peg$parseBlock();
+                                                s13 = peg$parseInstrs();
                                                 if (s13 !== peg$FAILED) {
                                                     s14 = peg$parse_();
                                                     if (s14 !== peg$FAILED) {
@@ -881,7 +883,7 @@ function peg$parse(input, options) {
                                             if (s11 !== peg$FAILED) {
                                                 s12 = peg$parse_();
                                                 if (s12 !== peg$FAILED) {
-                                                    s13 = peg$parseBlock();
+                                                    s13 = peg$parseInstrs();
                                                     if (s13 !== peg$FAILED) {
                                                         s14 = peg$parse_();
                                                         if (s14 !== peg$FAILED) {
@@ -1077,7 +1079,7 @@ function peg$parse(input, options) {
                 if (s3 !== peg$FAILED) {
                     s4 = peg$parse_();
                     if (s4 !== peg$FAILED) {
-                        s5 = peg$parseBlock();
+                        s5 = peg$parseInstrs();
                         if (s5 !== peg$FAILED) {
                             s6 = peg$parse_();
                             if (s6 !== peg$FAILED) {
@@ -1181,7 +1183,7 @@ function peg$parse(input, options) {
         if (s1 !== peg$FAILED) {
             s2 = peg$parse_();
             if (s2 !== peg$FAILED) {
-                s3 = peg$parseBlock();
+                s3 = peg$parseInstrs();
                 if (s3 !== peg$FAILED) {
                     s4 = peg$parse_();
                     if (s4 !== peg$FAILED) {
@@ -2037,7 +2039,7 @@ function peg$parse(input, options) {
             }
         }
         if (s1 !== peg$FAILED) {
-            s2 = peg$parseBlock();
+            s2 = peg$parseInstrs();
             if (s2 !== peg$FAILED) {
                 if (input.charCodeAt(peg$currPos) === 93) {
                     s3 = peg$c85;
@@ -2048,6 +2050,9 @@ function peg$parse(input, options) {
                     if (peg$silentFails === 0) {
                         peg$fail(peg$c86);
                     }
+                }
+                if (s3 === peg$FAILED) {
+                    s3 = null;
                 }
                 if (s3 !== peg$FAILED) {
                     peg$savedPos = s0;
@@ -2101,7 +2106,7 @@ function peg$parse(input, options) {
                 if (s5 !== peg$FAILED) {
                     s6 = peg$parseName();
                     if (s6 !== peg$FAILED) {
-                        s7 = peg$parseBlock();
+                        s7 = peg$parseInstrs();
                         if (s7 !== peg$FAILED) {
                             s5 = [s5, s6, s7];
                             s4 = s5;
@@ -2136,7 +2141,7 @@ function peg$parse(input, options) {
                     if (s5 !== peg$FAILED) {
                         s6 = peg$parseName();
                         if (s6 !== peg$FAILED) {
-                            s7 = peg$parseBlock();
+                            s7 = peg$parseInstrs();
                             if (s7 !== peg$FAILED) {
                                 s5 = [s5, s6, s7];
                                 s4 = s5;
@@ -2166,6 +2171,9 @@ function peg$parse(input, options) {
                         if (peg$silentFails === 0) {
                             peg$fail(peg$c86);
                         }
+                    }
+                    if (s4 === peg$FAILED) {
+                        s4 = null;
                     }
                     if (s4 !== peg$FAILED) {
                         peg$savedPos = s0;

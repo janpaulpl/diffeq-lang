@@ -18,17 +18,17 @@ Instr
 
 Keywd = If / For / While / Local / Var / Fun
 
-If = "if" _ cond:Block _ ":" _ if_branch:Block _ elif_branches:("elif" _ Block _ ":" _ Block)* _ else_branch:("else" _ Block)? "end"?
+If = "if" _ cond:Instrs _ ":" _ if_branch:Block _ elif_branches:("elif" _ Instrs _ ":" _ Block)* _ else_branch:("else" _ Block)? "end"?
 	{return {type: types.Instr_Type.if, branches: [
 		{cond, body: if_branch},
 		...elif_branches.map(branch => ({cond: branch[2], body: branch[6]})),
 		...(else_branch ? [{cond: null, body: else_branch[2]}] : [])
 	]}}
 
-For = "for" _ var_:Name _ iter:Block _ ":" _ body:Block "end"?
+For = "for" _ var_:Name _ iter:Instrs _ ":" _ body:Block "end"?
 	{return {type: types.Instr_Type.for, var: var_.data, iter, body}}
 
-While = "while" _ cond:Block _ ":" _ body:Block "end"?
+While = "while" _ cond:Instrs _ ":" _ body:Block "end"?
 	{return {type: types.Instr_Type.while, cond, body}}
 
 Local = var_:Name deriv:"'"* _ ":=" _ def:Instrs
@@ -56,10 +56,10 @@ Name = ! ("if"/"else"/"elif"/"end"/"for"/"while"/"var"/"fun") [A-Za-z_][A-Za-z0-
 Ref = "`" ref:Name
 	{return {type: types.Instr_Type.ref, data: ref.data}}
 
-Ls = "[" instrs:Block "]"
+Ls = "[" instrs:Instrs "]"?
 	{return {type: types.Instr_Type.ls, items: instrs}}
 
-Obj = "#[" _ pairs:(":" Name Block)* "]" {return {
+Obj = "#[" _ pairs:(":" Name Instrs)* "]"? {return {
 	type: types.Instr_Type.obj,
 	pairs: pairs.map(
 		pair => {return {key: pair[1].data, value: pair[2]}}

@@ -40,15 +40,15 @@ type Instr =
 	{type: Instr_Type.op, data: Op} |
 	{type: Instr_Type.name, data: string} |
 	{type: Instr_Type.ref, data: string} |
-	{type: Instr_Type.ls, items: Block} |
-	{type: Instr_Type.obj, pairs: {key: string, value: Block}[]} |
+	{type: Instr_Type.ls, items: Instrs} |
+	{type: Instr_Type.obj, pairs: {key: string, value: Instrs}[]} |
 	{type: Instr_Type.prop, data: string} |
 	{type: Instr_Type.num, data: number} |
 	{type: Instr_Type.str, data: string} |
 	{type: Instr_Type.expr, data: Expr} |
-	{type: Instr_Type.if, branches: {cond: Block, body: Block | null}[]} |
-	{type: Instr_Type.for, var: string, iter: Block, body: Block} |
-	{type: Instr_Type.while, cond: Block, body: Block} |
+	{type: Instr_Type.if, branches: {cond: Instrs, body: Block | null}[]} |
+	{type: Instr_Type.for, var: string, iter: Instrs, body: Block} |
+	{type: Instr_Type.while, cond: Instrs, body: Block} |
 	{type: Instr_Type.local, var: string, def: Instrs, deriv_n: number} |
 	{type: Instr_Type.var, var: string, def: Instrs, deriv_n: number} |
 	{type: Instr_Type.fun, fun: string, args: string[], body: Block};
