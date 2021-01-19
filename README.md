@@ -1,4 +1,4 @@
-# MathInv-2021: Applying DEs into Computing using Types and integrating a programming language interface
+# MathInv-2021: Domain Specific Language for differential equations with Scott-Strachey semantics
 Repo for MathInv /w [Camto](https://github.com/Camto)
 
 ## About
