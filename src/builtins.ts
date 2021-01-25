@@ -1,3 +1,5 @@
+import utils = require("./utils");
+
 function __print(st: any[], out: any[]) {
 	out.push(st.pop());
 }
@@ -101,17 +103,33 @@ function __tan(st: any[]) {
 	st.push(Math.tan(st.pop()));
 }
 
+function eq(a: any, b: any): boolean {
+	let a_type = utils.to_type(a);
+	let b_type = utils.to_type(b);
+	
+	if(a_type != b_type)
+		return false;
+	else if(["number", "string", "boolean"].includes(a_type))
+		return a == b;
+	else if(a_type == "array")
+		if(a.length != b.length)
+			return false;
+		else
+			return a.every((obj, i) => eq(obj, b[i]));
+	else
+		return false;
+}
+
 let __ops = {
 	
 	// Comparison
 	
-	// Fix for other types.
 	"=="(st: any[]) {
-		st.push(st.pop() == st.pop());
+		st.push(eq(st.pop(), st.pop()));
 	},
 	
 	"!="(st: any[]) {
-		st.push(st.pop() != st.pop());
+		st.push(!eq(st.pop(), st.pop()));
 	},
 	
 	"<="(st: any[]) {

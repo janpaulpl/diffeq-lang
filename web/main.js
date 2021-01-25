@@ -1,6 +1,7 @@
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.main = f()}})(function(){var define,module,exports;return (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
 exports.__esModule = true;
 exports.__ops = exports.__tan = exports.__cos = exports.__sin = exports.__e = exports.__pi = exports.__enum = exports.__srange = exports.__range = exports.__times = exports.__reduce = exports.__filter = exports.__map = exports.__len = exports.__false = exports.__true = exports.__print = void 0;
+var utils = require("./utils");
 function __print(st, out) {
     out.push(st.pop());
 }
@@ -103,14 +104,28 @@ function __tan(st) {
     st.push(Math.tan(st.pop()));
 }
 exports.__tan = __tan;
+function eq(a, b) {
+    var a_type = utils.to_type(a);
+    var b_type = utils.to_type(b);
+    if (a_type != b_type)
+        return false;
+    else if (["number", "string", "boolean"].includes(a_type))
+        return a == b;
+    else if (a_type == "array")
+        if (a.length != b.length)
+            return false;
+        else
+            return a.every(function (obj, i) { return eq(obj, b[i]); });
+    else
+        return false;
+}
 var __ops = {
     // Comparison
-    // Fix for other types.
     "==": function (st) {
-        st.push(st.pop() == st.pop());
+        st.push(eq(st.pop(), st.pop()));
     },
     "!=": function (st) {
-        st.push(st.pop() != st.pop());
+        st.push(!eq(st.pop(), st.pop()));
     },
     "<=": function (st) {
         st.push(st.pop() <= st.pop());
@@ -175,7 +190,7 @@ var __ops = {
 };
 exports.__ops = __ops;
 
-},{}],2:[function(require,module,exports){
+},{"./utils":6}],2:[function(require,module,exports){
 var __spreadArrays = (this && this.__spreadArrays) || function () {
     for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
     for (var r = Array(s), k = 0, i = 0; i < il; i++)
@@ -281,11 +296,12 @@ function tabs(indent) {
 
 },{"./types":5}],3:[function(require,module,exports){
 exports.__esModule = true;
-exports.builtins = exports.err_to_str = exports.run = void 0;
+exports.to_type = exports.builtins = exports.err_to_str = exports.run = void 0;
 var parser = require("./parser");
 var compiler = require("./compiler");
 var builtins = require("./builtins");
 exports.builtins = builtins;
+var utils = require("./utils");
 function run(prog) {
     var comp = compiler.compile(parser.parse(prog));
     console.log(comp);
@@ -296,8 +312,10 @@ var err_to_str = function (err) { return !(err instanceof Error)
     ? err
     : err.stack.split("\n").slice(0, 2).join("\n\t"); };
 exports.err_to_str = err_to_str;
+var to_type = utils.to_type;
+exports.to_type = to_type;
 
-},{"./builtins":1,"./compiler":2,"./parser":4}],4:[function(require,module,exports){
+},{"./builtins":1,"./compiler":2,"./parser":4,"./utils":6}],4:[function(require,module,exports){
 var __spreadArrays = (this && this.__spreadArrays) || function () {
     for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
     for (var r = Array(s), k = 0, i = 0; i < il; i++)
@@ -4177,6 +4195,14 @@ var Main_Var;
     Main_Var[Main_Var["y"] = 1] = "y";
 })(Main_Var || (Main_Var = {}));
 exports.Main_Var = Main_Var;
+
+},{}],6:[function(require,module,exports){
+exports.__esModule = true;
+exports.to_type = void 0;
+function to_type(obj) {
+    return ({}).toString.call(obj).match(/\s([a-zA-Z]+)/)[1].toLowerCase();
+}
+exports.to_type = to_type;
 
 },{}]},{},[3])(3)
 });
