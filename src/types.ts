@@ -1,11 +1,3 @@
-declare global {
-	interface Window {
-		vars: {[name: string]: any};
-		funs: {[name: string]: (st: any[], out: any[]) => void};
-		res_hist: any[];
-	}
-}
-
 enum Instr_Type {
 	op, name, ref, ls, obj, prop, num, str, expr, // Basic
 	if, for, while, local, var, fun, anon // Structures
@@ -19,18 +11,6 @@ enum Op {
 	"&", "|", "!", // Boolean
 	"??", "?" // Special interaction
 }
-
-enum Expr_Top_Type {single, eq}
-
-enum Expr_Type {
-	parens, call, const, main_vars, vars, num
-}
-
-enum Term_Op {"+", "-"}
-
-enum Prod_Op {"*", "/"}
-
-enum Main_Var {x, y}
 
 type Block = Instrs[];
 
@@ -54,6 +34,18 @@ type Instr =
 	{type: Instr_Type.fun, fun: string, args: string[], body: Block} |
 	{type: Instr_Type.anon, args: string[], body: Block};
 
+enum Expr_Top_Type {single, eq}
+
+enum Expr_Type {
+	parens, call, const, main_vars, vars, num
+}
+
+enum Term_Op {"+", "-"}
+
+enum Prod_Op {"*", "/"}
+
+enum Main_Var {x, y}
+
 type Expr =
 	{type: Expr_Top_Type.single, expr: Terms[]} |
 	{type: Expr_Top_Type.eq, left: Terms[], right: Terms[]};
@@ -68,5 +60,13 @@ type Final =
 	{type: Expr_Type.main_vars, data: Main_Var} |
 	{type: Expr_Type.vars, data: string} |
 	{type: Expr_Type.num, data: number};
+
+declare global {
+	interface Window {
+		vars: {[name: string]: any};
+		funs: {[name: string]: (st: any[], out: any[]) => void};
+		res_hist: any[];
+	}
+}
 
 export {Instr_Type, Op, Expr_Top_Type, Expr_Type, Term_Op, Prod_Op, Main_Var, Block, Instrs, Instr};

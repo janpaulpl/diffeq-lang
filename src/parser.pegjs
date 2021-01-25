@@ -86,6 +86,10 @@ Super_Str = "\\" .* {return {
 	data: text().slice(1).replace(/\\/g, "\\\\").replace(/"/g, '\\"')
 }}
 
+_ = ([ \t\n\r] / Cmmnt)*
+
+Cmmnt = "#(" [^)]* ")"
+
 Expr = "{" _ eq:Eq _ "}"
 	{return {type: types.Instr_Type.expr, data: eq}}
 
@@ -145,7 +149,3 @@ Math_Fun_2 = "root" / "log"
 Math_Fun_3 = "sum" / "prod"
 
 Math_Const = "pi" / "π" / "tau" / "τ" / "e"
-
-_ = ([ \t\n\r] / Cmmnt)*
-
-Cmmnt = "#(" [^)]* ")"

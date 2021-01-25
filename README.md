@@ -72,7 +72,7 @@ print + 1 1  4;
 print ?? 4;
 
 map `inc [1 2 3];
-map inc [1 2 3];
+map anon n: + n 1 end [1 2 3];
 
 + "x \"+ 1" "x^2";
 
