@@ -14,8 +14,8 @@ out;
 }`;
 
 let builtins = [
-	"print", "true", "false", "map", "times", "range", "srange", 
-	"pi", "e", "tau", 
+	"print", "true", "false", "call", "len", "map", "filter", "reduce", "times", "range", "srange", "enum",
+	"pi", "e", "tau",
 	"sin", "cos", "tan", "cot", "sec", "csc"];
 
 function compile(ast: types.Block): string {
@@ -31,7 +31,7 @@ function compile_rec(
 			case types.Instr_Type.op:
 				return `__ops["${types.Op[instr.data]}"](st, out);`;
 			case types.Instr_Type.name:
-				if(instr.data == "debug") return "debugger;";	
+				if(instr.data == "debug") return "debugger;";
 				
 				if(locals.includes(instr.data))
 					return `st.push(${instr.data});`;
@@ -93,6 +93,8 @@ function compile_rec(
 			case types.Instr_Type.fun:
 				funs = [...funs, instr.fun];
 				return `window.funs.${instr.fun} = (st, out) => {\n${instr.args.map(arg => `${tabs(indent + 1)}let ${arg} = st.pop();\n`).join("")}${compile_rec(instr.body, indent + 1, [...locals, ...instr.args], vars, funs)}\n${tabs(indent)}}`
+			case types.Instr_Type.anon:
+				return `st.push((st, out) => {\n${instr.args.map(arg => `${tabs(indent + 1)}let ${arg} = st.pop();\n`).join("")}${compile_rec(instr.body, indent + 1, [...locals, ...instr.args], vars, funs)}\n${tabs(indent)}});`
 			default:
 				return "NOT OP;";
 		}

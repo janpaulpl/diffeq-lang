@@ -85,14 +85,12 @@ function format(out) {
 }
 
 function stringify(obj) {
-	let obj_type = to_type(obj);
-	if(obj_type == "number" || obj_type == "string") {
+	let obj_type = main.to_type(obj);
+	if(obj_type == "number" || obj_type == "string" || obj_type == "boolean") {
 		return obj.toString();
 	} else if(obj_type == "array") {
 		return `[${obj.map(stringify).join(" ")}]`;
+	} else if(obj_type == "object") {
+		return `#[${Object.entries(obj).map(([key, val]) => `:${key} ${stringify(val)}`).join(" ")}]`;
 	}
-}
-
-function to_type(obj) {
-  return ({}).toString.call(obj).match(/\s([a-zA-Z]+)/)[1].toLowerCase();
 }
