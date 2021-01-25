@@ -93,6 +93,8 @@ function compile_rec(
 			case types.Instr_Type.fun:
 				funs = [...funs, instr.fun];
 				return `window.funs.${instr.fun} = (st, out) => {\n${instr.args.map(arg => `${tabs(indent + 1)}let ${arg} = st.pop();\n`).join("")}${compile_rec(instr.body, indent + 1, [...locals, ...instr.args], vars, funs)}\n${tabs(indent)}}`
+			case types.Instr_Type.anon:
+				return `st.push((st, out) => {\n${instr.args.map(arg => `${tabs(indent + 1)}let ${arg} = st.pop();\n`).join("")}${compile_rec(instr.body, indent + 1, [...locals, ...instr.args], vars, funs)}\n${tabs(indent)}});`
 			default:
 				return "NOT OP;";
 		}

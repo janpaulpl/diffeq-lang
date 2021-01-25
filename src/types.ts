@@ -8,7 +8,7 @@ declare global {
 
 enum Instr_Type {
 	op, name, ref, ls, obj, prop, num, str, expr, // Basic
-	if, for, while, local, var, fun // Structures
+	if, for, while, local, var, fun, anon // Structures
 }
 
 enum Op {
@@ -51,7 +51,8 @@ type Instr =
 	{type: Instr_Type.while, cond: Instrs, body: Block} |
 	{type: Instr_Type.local, var: string, def: Instrs, deriv_n: number} |
 	{type: Instr_Type.var, var: string, def: Instrs, deriv_n: number} |
-	{type: Instr_Type.fun, fun: string, args: string[], body: Block};
+	{type: Instr_Type.fun, fun: string, args: string[], body: Block} |
+	{type: Instr_Type.anon, args: string[], body: Block};
 
 type Expr =
 	{type: Expr_Top_Type.single, expr: Terms[]} |

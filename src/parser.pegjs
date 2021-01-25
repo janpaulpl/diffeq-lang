@@ -17,7 +17,7 @@ Instr
 	/ Super_Str
 	/ Expr
 
-Keywd = If / For / While / Local / Var / Fun
+Keywd = If / For / While / Local / Var / Fun / Anon
 
 If = "if" _ cond:Instrs _ ":" _ if_branch:Block _ elif_branches:("elif" _ Instrs _ ":" _ Block)* _ else_branch:("else" _ Block)? "end"?
 	{return {type: types.Instr_Type.if, branches: [
@@ -41,6 +41,9 @@ Var = var_:Name deriv:"'"* _ "=" _ def:Instrs
 Fun = "fun" _ fun:Name _ args:(Name _)* ":" _ body:Block _ "end"?
 	{return {type: types.Instr_Type.fun, fun: fun.data, args: args.map(arg => arg[0].data), body}}
 
+Anon = "anon" _ args:(Name _)* ":" _ body:Block _ "end"?
+	{return {type: types.Instr_Type.anon, args: args.map(arg => arg[0].data), body}}
+
 Op
 	= (
 		"==" / "!=" / "<=" / ">=" / "<" / ">" /
@@ -51,7 +54,7 @@ Op
 		"??" / "?")
 		{return {type: types.Instr_Type.op, data: types.Op[text()]}}
 
-Name = ! ("if"/"else"/"elif"/"end"/"for"/"while"/"var"/"fun") [A-Za-z_][A-Za-z0-9_]*
+Name = ! ("if"/"else"/"elif"/"end"/"for"/"while"/"var"/"fun"/"anon") [A-Za-z_][A-Za-z0-9_]*
 	{return {type: types.Instr_Type.name, data: text()}}
 
 Ref = "`" ref:Name
