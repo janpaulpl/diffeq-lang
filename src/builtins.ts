@@ -20,6 +20,18 @@ function __map(st: any[], out: any[]) {
 	}));
 }
 
+function __reduce(st: any[], out: any[]) {
+	let fun = st.pop();
+	let init_acc = st.pop();
+	let list = st.pop();
+	st.push(list.reduce((acc: any, curr: any) => {
+		st.push(curr);
+		st.push(acc);
+		fun(st, out);
+		return st.pop();
+	}, init_acc));
+}
+
 function __times(st: any[], out: any[]) {
 	let times = st.pop();
 	st.push((new Array(times)).fill(0));
@@ -166,4 +178,4 @@ let __ops = {
 	}
 };
 
-export {__print, __true, __false, __map, __times, __range, __srange, __pi, __e, __sin, __cos, __tan, __ops};
+export {__print, __true, __false, __map, __reduce, __times, __range, __srange, __pi, __e, __sin, __cos, __tan, __ops};
