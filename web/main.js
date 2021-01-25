@@ -1,6 +1,6 @@
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.main = f()}})(function(){var define,module,exports;return (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
 exports.__esModule = true;
-exports.__ops = exports.__tan = exports.__cos = exports.__sin = exports.__e = exports.__pi = exports.__srange = exports.__range = exports.__times = exports.__reduce = exports.__map = exports.__false = exports.__true = exports.__print = void 0;
+exports.__ops = exports.__tan = exports.__cos = exports.__sin = exports.__e = exports.__pi = exports.__srange = exports.__range = exports.__times = exports.__reduce = exports.__filter = exports.__map = exports.__false = exports.__true = exports.__print = void 0;
 function __print(st, out) {
     out.push(st.pop());
 }
@@ -23,6 +23,16 @@ function __map(st, out) {
     }));
 }
 exports.__map = __map;
+function __filter(st, out) {
+    var fun = st.pop();
+    var list = st.pop();
+    st.push(list.filter(function (obj) {
+        st.push(obj);
+        fun(st, out);
+        return st.pop();
+    }));
+}
+exports.__filter = __filter;
 function __reduce(st, out) {
     var fun = st.pop();
     var init_acc = st.pop();
@@ -169,7 +179,7 @@ var types = require("./types");
 var prelude = "with(main.builtins) {\n\nlet st = [];\nlet out = [];\n";
 var postlude = "\n\nout = [...out, ...st];\nout;\n}";
 var builtins = [
-    "print", "true", "false", "map", "reduce", "times", "range", "srange",
+    "print", "true", "false", "map", "filter", "reduce", "times", "range", "srange",
     "pi", "e", "tau",
     "sin", "cos", "tan", "cot", "sec", "csc"
 ];
