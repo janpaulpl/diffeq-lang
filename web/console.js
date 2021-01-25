@@ -90,5 +90,7 @@ function stringify(obj) {
 		return obj.toString();
 	} else if(obj_type == "array") {
 		return `[${obj.map(stringify).join(" ")}]`;
+	} else if(obj_type == "object") {
+		return `#[${Object.entries(obj).map(([key, val]) => `:${key} ${stringify(val)}`).join(" ")}]`;
 	}
 }
