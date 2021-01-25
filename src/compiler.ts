@@ -31,7 +31,7 @@ function compile_rec(
 			case types.Instr_Type.op:
 				return `__ops["${types.Op[instr.data]}"](st, out);`;
 			case types.Instr_Type.name:
-				if(instr.data == "debug") return "debugger;";	
+				if(instr.data == "debug") return "debugger;";
 				
 				if(locals.includes(instr.data))
 					return `st.push(${instr.data});`;
