@@ -12,6 +12,10 @@ function __false(st: any[]) {
 	st.push(false);
 }
 
+function __call(st: any[], out: any[]) {
+	st.pop()(st, out);
+}
+
 function __len(st: any[]) {
 	st.push(st.pop().length);
 }
@@ -216,4 +220,4 @@ let __ops = {
 	}
 };
 
-export {__print, __true, __false, __len, __map, __filter, __reduce, __times, __range, __srange, __enum, __pi, __e, __sin, __cos, __tan, __ops};
+export {__print, __true, __false, __call, __len, __map, __filter, __reduce, __times, __range, __srange, __enum, __pi, __e, __sin, __cos, __tan, __ops};
