@@ -5,11 +5,11 @@ function __print(st, out) {
     out.push(st.pop());
 }
 exports.__print = __print;
-function __true(st, out) {
+function __true(st) {
     st.push(true);
 }
 exports.__true = __true;
-function __false(st, out) {
+function __false(st) {
     st.push(false);
 }
 exports.__false = __false;
@@ -83,93 +83,93 @@ function __enum(st) {
     __range(st);
 }
 exports.__enum = __enum;
-function __pi(st, out) {
+function __pi(st) {
     st.push(Math.PI);
 }
 exports.__pi = __pi;
-function __e(st, out) {
+function __e(st) {
     st.push(Math.E);
 }
 exports.__e = __e;
-function __sin(st, out) {
+function __sin(st) {
     st.push(Math.sin(st.pop()));
 }
 exports.__sin = __sin;
-function __cos(st, out) {
+function __cos(st) {
     st.push(Math.cos(st.pop()));
 }
 exports.__cos = __cos;
-function __tan(st, out) {
+function __tan(st) {
     st.push(Math.tan(st.pop()));
 }
 exports.__tan = __tan;
 var __ops = {
     // Comparison
     // Fix for other types.
-    "==": function (st, out) {
+    "==": function (st) {
         st.push(st.pop() == st.pop());
     },
-    "!=": function (st, out) {
+    "!=": function (st) {
         st.push(st.pop() != st.pop());
     },
-    "<=": function (st, out) {
+    "<=": function (st) {
         st.push(st.pop() <= st.pop());
     },
-    ">=": function (st, out) {
+    ">=": function (st) {
         st.push(st.pop() >= st.pop());
     },
-    "<": function (st, out) {
+    "<": function (st) {
         st.push(st.pop() < st.pop());
     },
-    ">": function (st, out) {
+    ">": function (st) {
         st.push(st.pop() > st.pop());
     },
     // Arithmetic
-    "+": function (st, out) {
+    "+": function (st) {
         st.push(st.pop() + st.pop());
     },
     "~": function (st) {
         st.push(-st.pop());
     },
-    "-": function (st, out) {
+    "-": function (st) {
         st.push(st.pop() - st.pop());
     },
-    "*": function (st, out) {
+    "*": function (st) {
         st.push(st.pop() * st.pop());
     },
-    "/": function (st, out) {
+    "/": function (st) {
         st.push(st.pop() / st.pop());
     },
     // Extra math
-    "^": function (st, out) {
+    "^": function (st) {
         st.push(Math.pow(st.pop(), st.pop()));
     },
-    "%%": function (st, out) {
+    "%%": function (st) {
         st.push(st.pop() % st.pop() == 0);
     },
-    "%": function (st, out) {
+    "%": function (st) {
         st.push(st.pop() % st.pop());
     },
-    // Derivation: "'"(st: any[], out: any[]) { }
+    // Derivation: "'"(st: any[]) { }
     // List indexing
-    "@": function (st, out) {
+    "@": function (st) {
         st.push(st.pop()[st.pop()]);
     },
     // Boolean
-    "&": function (st, out) {
+    "&": function (st) {
         st.push(st.pop() && st.pop());
     },
-    "|": function (st, out) {
+    "|": function (st) {
         st.push(st.pop() || st.pop());
     },
-    "!": function (st, out) {
+    "!": function (st) {
         st.push(!(st.pop()));
     },
     // Special interaction
-    "?": function (st, out) {
+    "?": function (st) {
         st.push(window.res_hist[window.res_hist.length - 1]);
     },
-    "??": function (st, out) {
+    "??": function (st) {
         st.push(window.res_hist[st.pop()]);
     }
 };
