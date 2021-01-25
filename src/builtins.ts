@@ -10,6 +10,10 @@ function __false(st: any[], out: any[]) {
 	st.push(false);
 }
 
+function __len(st: any[]) {
+	st.push(st.pop().length);
+}
+
 function __map(st: any[], out: any[]) {
 	let fun = st.pop();
 	let list = st.pop();
@@ -42,12 +46,12 @@ function __reduce(st: any[], out: any[]) {
 	}, init_acc));
 }
 
-function __times(st: any[], out: any[]) {
+function __times(st: any[]) {
 	let times = st.pop();
 	st.push((new Array(times)).fill(0));
 }
 
-function __range(st: any[], out: any[]) {
+function __range(st: any[]) {
 	let start = st.pop();
 	let stop = st.pop();
 	if(start <= stop) {
@@ -57,7 +61,7 @@ function __range(st: any[], out: any[]) {
 	}
 }
 
-function __srange(st: any[], out: any[]) {
+function __srange(st: any[]) {
 	let start = st.pop();
 	let stop = st.pop();
 	let step = st.pop();
@@ -69,6 +73,12 @@ function __srange(st: any[], out: any[]) {
 			(_, i) => i * step + start)
 		);
 	}
+}
+
+function __enum(st: any[]) {
+	st.push(st.pop().length);
+	st.push(0);
+	__range(st);
 }
 
 function __pi(st: any[], out: any[]) {
@@ -188,4 +198,4 @@ let __ops = {
 	}
 };
 
-export {__print, __true, __false, __map, __filter, __reduce, __times, __range, __srange, __pi, __e, __sin, __cos, __tan, __ops};
+export {__print, __true, __false, __len, __map, __filter, __reduce, __times, __range, __srange, __enum, __pi, __e, __sin, __cos, __tan, __ops};

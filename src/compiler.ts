@@ -14,8 +14,8 @@ out;
 }`;
 
 let builtins = [
-	"print", "true", "false", "map", "filter", "reduce", "times", "range", "srange", 
-	"pi", "e", "tau", 
+	"print", "true", "false", "len", "map", "filter", "reduce", "times", "range", "srange", "enum",
+	"pi", "e", "tau",
 	"sin", "cos", "tan", "cot", "sec", "csc"];
 
 function compile(ast: types.Block): string {

@@ -1,6 +1,6 @@
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.main = f()}})(function(){var define,module,exports;return (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
 exports.__esModule = true;
-exports.__ops = exports.__tan = exports.__cos = exports.__sin = exports.__e = exports.__pi = exports.__srange = exports.__range = exports.__times = exports.__reduce = exports.__filter = exports.__map = exports.__false = exports.__true = exports.__print = void 0;
+exports.__ops = exports.__tan = exports.__cos = exports.__sin = exports.__e = exports.__pi = exports.__enum = exports.__srange = exports.__range = exports.__times = exports.__reduce = exports.__filter = exports.__map = exports.__len = exports.__false = exports.__true = exports.__print = void 0;
 function __print(st, out) {
     out.push(st.pop());
 }
@@ -13,6 +13,10 @@ function __false(st, out) {
     st.push(false);
 }
 exports.__false = __false;
+function __len(st) {
+    st.push(st.pop().length);
+}
+exports.__len = __len;
 function __map(st, out) {
     var fun = st.pop();
     var list = st.pop();
@@ -45,12 +49,12 @@ function __reduce(st, out) {
     }, init_acc));
 }
 exports.__reduce = __reduce;
-function __times(st, out) {
+function __times(st) {
     var times = st.pop();
     st.push((new Array(times)).fill(0));
 }
 exports.__times = __times;
-function __range(st, out) {
+function __range(st) {
     var start = st.pop();
     var stop = st.pop();
     if (start <= stop) {
@@ -61,7 +65,7 @@ function __range(st, out) {
     }
 }
 exports.__range = __range;
-function __srange(st, out) {
+function __srange(st) {
     var start = st.pop();
     var stop = st.pop();
     var step = st.pop();
@@ -73,6 +77,12 @@ function __srange(st, out) {
     }
 }
 exports.__srange = __srange;
+function __enum(st) {
+    st.push(st.pop().length);
+    st.push(0);
+    __range(st);
+}
+exports.__enum = __enum;
 function __pi(st, out) {
     st.push(Math.PI);
 }
@@ -179,7 +189,7 @@ var types = require("./types");
 var prelude = "with(main.builtins) {\n\nlet st = [];\nlet out = [];\n";
 var postlude = "\n\nout = [...out, ...st];\nout;\n}";
 var builtins = [
-    "print", "true", "false", "map", "filter", "reduce", "times", "range", "srange",
+    "print", "true", "false", "len", "map", "filter", "reduce", "times", "range", "srange", "enum",
     "pi", "e", "tau",
     "sin", "cos", "tan", "cot", "sec", "csc"
 ];
@@ -422,7 +432,7 @@ function peg$parse(input, options) {
     }, peg$c105 = function () {
         return {
             type: types.Instr_Type.str,
-            data: text().slice(1).replace(/\\/g, "\\\\").replace(/`/g, "\\`").replace(/\$/g, "\\$")
+            data: text().slice(1).replace(/\\/g, "\\\\").replace(/"/g, '\\"')
         };
     }, peg$c106 = "{", peg$c107 = peg$literalExpectation("{", false), peg$c108 = "}", peg$c109 = peg$literalExpectation("}", false), peg$c110 = function (eq) { return { type: types.Instr_Type.expr, data: eq }; }, peg$c111 = function (left, right) {
         return !right

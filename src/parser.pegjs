@@ -80,7 +80,7 @@ Str = '"' ([^"\\] / ("\\" .))* '"' {return {
 
 Super_Str = "\\" .* {return {
 	type: types.Instr_Type.str,
-	data: text().slice(1).replace(/\\/g, "\\\\").replace(/`/g, "\\`").replace(/\$/g, "\\$")
+	data: text().slice(1).replace(/\\/g, "\\\\").replace(/"/g, '\\"')
 }}
 
 Expr = "{" _ eq:Eq _ "}"
