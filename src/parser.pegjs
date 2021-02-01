@@ -153,24 +153,18 @@ Math_Fun_1 = (
 Math_Fun_2 = "root" / "log"
 Math_Fun_3 = "sum" / "prod"
 
-// For some reason it only works if I do this, Idk.
-Math_Const = Math_Const_Wrapped
+Math_Const = ("pi" / "π" / "tau" / "τ" / "e")
 	{return {type: types.Expr_Type.num, data: {
 		pi: Math.PI, π: Math.PI,
 		tau: 2 * Math.PI, τ: 2 * Math.PI,
 		e: Math.E
 	}[text()]}}
-Math_Const_Wrapped = "pi" / "π" / "tau" / "τ" / "e"
 
-// For some reason it only works if I do this, Idk.
-Main_Vars = Main_Vars_Wrapped
+Main_Vars = ("x" / "y")
 	{return {type: types.Expr_Type.main_var, data: text()}}
-Main_Vars_Wrapped = "x" / "y"
 
-// For some reason it only works if I do this, Idk.
-Vars = Vars_Wrapped
+Vars = [a-wz]
 	{return {type: types.Expr_Type.var, data: text()}}
-Vars_Wrapped = [a-wz]
 
 Expr_Num = [0-9]+ ("." [0-9]+)?
 	{return {type: types.Expr_Type.num, data: parseFloat(text())}}
