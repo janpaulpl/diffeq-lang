@@ -37,7 +37,7 @@ type Instr =
 enum Expr_Top_Type {single, eq}
 
 enum Expr_Type {
-	parens, call, const, main_vars, vars, num
+	parens, call, const, main_var, var, num
 }
 
 enum Term_Op {"+", "-"}
@@ -53,13 +53,16 @@ type Terms = {op: Term_Op, prod: Prods}[];
 type Prods = {op: Prod_Op, prod: Exps}[];
 type Exps = Final[];
 
-type Final =
-	{type: Expr_Type.parens, data: Terms[]} |
-	{type: Expr_Type.call, name: string, args: Terms[][]} |
-	{type: Expr_Type.const, data: number} |
-	{type: Expr_Type.main_vars, data: Main_Var} |
-	{type: Expr_Type.vars, data: string} |
-	{type: Expr_Type.num, data: number};
+type Final = {
+	pos: boolean,
+	val: (
+		{type: Expr_Type.parens, data: Terms[]} |
+		{type: Expr_Type.call, name: string, args: Terms[][]} |
+		{type: Expr_Type.main_var, data: Main_Var} |
+		{type: Expr_Type.var, data: string} |
+		{type: Expr_Type.num, data: number}
+	)
+};
 
 declare global {
 	interface Window {
