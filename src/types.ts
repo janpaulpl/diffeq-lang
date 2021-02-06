@@ -47,8 +47,8 @@ enum Prod_Op {"*", "/"}
 enum Main_Var {x, y}
 
 type Expr =
-	{type: Expr_Top_Type.single, expr: Terms[]} |
-	{type: Expr_Top_Type.eq, left: Terms[], right: Terms[]};
+	{type: Expr_Top_Type.single, expr: Terms} |
+	{type: Expr_Top_Type.eq, left: Terms, right: Terms};
 type Terms = {op: Term_Op, prod: Prods}[];
 type Prods = {op: Prod_Op, prod: Exps}[];
 type Exps = Final[];
@@ -56,8 +56,8 @@ type Exps = Final[];
 type Final = {
 	pos: boolean,
 	val: (
-		{type: Expr_Type.parens, data: Terms[]} |
-		{type: Expr_Type.call, name: string, args: Terms[][]} |
+		{type: Expr_Type.parens, data: Terms} |
+		{type: Expr_Type.call, name: string, args: Terms[]} |
 		{type: Expr_Type.main_var, data: Main_Var} |
 		{type: Expr_Type.var, data: string} |
 		{type: Expr_Type.num, data: number}
@@ -72,4 +72,4 @@ declare global {
 	}
 }
 
-export {Instr_Type, Op, Expr_Top_Type, Expr_Type, Term_Op, Prod_Op, Main_Var, Block, Instrs, Instr};
+export {Instr_Type, Op, Expr, Terms, Prods, Exps, Final, Expr_Top_Type, Expr_Type, Term_Op, Prod_Op, Main_Var, Block, Instrs, Instr};
