@@ -1,4 +1,4 @@
-**Example of syntax for an imperative language**
+# Example of syntax for an imperative language
 ```
 <program> ::= main { <declarations> ; <statement> }
 <declarations> ::= epsilon
