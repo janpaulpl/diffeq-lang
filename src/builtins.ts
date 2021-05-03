@@ -1,5 +1,6 @@
 import types = require("./types");
 import utils = require("./utils");
+import expr = require("./expr");
 
 function __print(st: any[], out: any[]) {
 	out.push(st.pop());
@@ -106,6 +107,15 @@ function __cos(st: any[]) {
 
 function __tan(st: any[]) {
 	st.push(Math.tan(st.pop()));
+}
+
+function __num_diff(st: any[]) {
+	let ast = st.pop();
+	let x = st.pop();
+	let h = 0.0000009;
+	
+	// Ratio of difference
+	st.push((expr.eval_at(ast, x + h) - expr.eval_at(ast, x)) / h);
 }
 
 function eq(a: any, b: any): boolean {
@@ -221,4 +231,4 @@ let __ops = {
 	}
 };
 
-export {__print, __true, __false, __call, __len, __map, __filter, __reduce, __times, __range, __srange, __enum, __pi, __e, __sin, __cos, __tan, __ops};
+export {__print, __true, __false, __call, __len, __map, __filter, __reduce, __times, __range, __srange, __enum, __pi, __e, __sin, __cos, __tan, __num_diff, __ops};

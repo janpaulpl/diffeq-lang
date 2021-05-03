@@ -16,7 +16,7 @@ out;
 let builtins = [
 	"print", "true", "false", "call", "len", "map", "filter", "reduce", "times", "range", "srange", "enum",
 	"pi", "e", "tau",
-	"sin", "cos", "tan", "cot", "sec", "csc"
+	"sin", "cos", "tan", "cot", "sec", "csc", "num_diff"
 ];
 
 function compile(ast: types.Block): string {
@@ -66,8 +66,7 @@ function compile_rec(
 			case types.Instr_Type.str:
 				return `st.push("${instr.data}");`;
 			case types.Instr_Type.expr:
-				console.log(JSON.stringify(instr));
-				return "";
+				return `st.push(${JSON.stringify(instr.data)})`;
 			case types.Instr_Type.if:
 				return instr.branches.map(branch =>
 					`${
