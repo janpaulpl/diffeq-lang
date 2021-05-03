@@ -192,7 +192,11 @@ var __ops = {
         st.push(st.pop() % st.pop());
     },
     "'": function (st) {
-        st.push(expr.simplify(expr.derive(st.pop())));
+        var derivative = expr.derive(st.pop());
+        console.log(expr.stringify(derivative));
+        var simplification = expr.simplify(derivative);
+        console.log(expr.stringify(simplification));
+        st.push(simplification);
     },
     // List indexing
     "@": function (st) {

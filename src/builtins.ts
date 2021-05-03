@@ -213,7 +213,11 @@ let __ops = {
 	},
 	
 	"'"(st: any[]) {
-		st.push(expr.simplify(expr.derive(st.pop())));
+		let derivative: types.Expr = expr.derive(st.pop());
+		console.log(expr.stringify(derivative));
+		let simplification: types.Expr = expr.simplify(derivative);
+		console.log(expr.stringify(simplification));
+		st.push(simplification);
 	},
 	
 	// List indexing
