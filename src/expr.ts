@@ -99,15 +99,28 @@ function derive(ast: types.Expr): types.Expr {
 					right: num(2)
 				}
 			};
-		// for pow: left := base, right := exponent
-		// Multiplication
-			// Multiplication	
-				// Exponentiate
-					// left
-					// num(1-right)
-				// right
-			// Derivative left
+
+		// Exponentiation will only work for numerical exponents 
 		
+		case types.Expr_Type.pow:
+			return {
+				type: types.Expr_Type.mul,
+				left: {
+					type: types.Expr_Type.mul,
+					left: {
+						type: types.Expr_Type.pow,
+						left: ast.left,
+						right: { 
+							type: types.Expr_Type.sub,
+							left: num(1),
+							right: ast.right
+						},
+					},
+					right: ast.right
+				},
+				right: derive(ast.left)
+			};
+
 		case types.Expr_Type.expr_var:
 			return num(1);
 		
