@@ -113,7 +113,7 @@ function obj_to_elem(obj) {
 	if(!(obj instanceof main.Expr)) {
 		return `<p class="indented">${stringify(obj)} <button onclick="$('#code-box').val($('#code-box').val() + '??' + (${res_cou++}).toString())">Get</button> </p>`;
 	} else {
-		return `<p class="indented"><canvas width=${graph_w} height=${graph_h} render='${JSON.stringify(obj)}'></canvas> <button onclick="$('#code-box').val($('#code-box').val() + '??' + (${res_cou++}).toString())">Get</button> </p>`;
+		return `<p class="indented"><canvas width=${graph_w} height=${graph_h} render='${JSON.stringify(obj)}'></canvas> ${graph_w}x${graph_h}, magnified ${graph_zoom}x <button onclick="$('#code-box').val($('#code-box').val() + '??' + (${res_cou++}).toString())">Get</button> </p>`;
 	}
 }
 
