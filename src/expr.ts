@@ -31,8 +31,8 @@ function eval_at(ast: types.Expr, x: number): number {
 				case "sqrt": return Math.sqrt(eval_at(ast.args[0], x));
 				case "cbrt": return Math.cbrt(eval_at(ast.args[0], x));
 				case "ln": return Math.log(eval_at(ast.args[0], x));
-				case "cos": return Math.cos(eval_at(ast.args[0], x));
 				case "sin": return Math.sin(eval_at(ast.args[0], x));
+				case "cos": return Math.cos(eval_at(ast.args[0], x));
 				case "tan": return Math.tan(eval_at(ast.args[0], x));
 				case "cot": return 1 / Math.tan(eval_at(ast.args[0], x));
 				case "sec": return 1 / Math.cos(eval_at(ast.args[0], x));

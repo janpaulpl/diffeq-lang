@@ -93,6 +93,10 @@ function __pi(st: any[]) {
 	st.push(Math.PI);
 }
 
+function __tau(st: any[]) {
+	st.push(2 * Math.PI);
+}
+
 function __e(st: any[]) {
 	st.push(Math.E);
 }
@@ -107,6 +111,18 @@ function __cos(st: any[]) {
 
 function __tan(st: any[]) {
 	st.push(Math.tan(st.pop()));
+}
+
+function __cot(st: any[]) {
+	st.push(1 / Math.tan(st.pop()));
+}
+
+function __sec(st: any[]) {
+	st.push(1 / Math.cos(st.pop()));
+}
+
+function __csc(st: any[]) {
+	st.push(1 / Math.sin(st.pop()));
 }
 
 function __show_expr(st: any[]) {
@@ -257,4 +273,4 @@ let __ops = {
 	}
 };
 
-export {__print, __true, __false, __call, __len, __map, __filter, __reduce, __times, __range, __srange, __enum, __pi, __e, __sin, __cos, __tan, __show_expr, __eval, __num_diff, __set_size, __set_zoom, __ops};
+export {__print, __true, __false, __call, __len, __map, __filter, __reduce, __times, __range, __srange, __enum, __pi, __tau, __e, __sin, __cos, __tan, __cot, __sec, __csc, __show_expr, __eval, __num_diff, __set_size, __set_zoom, __ops};

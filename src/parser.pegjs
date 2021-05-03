@@ -155,7 +155,7 @@ Math_Call_2 = name:Math_Fun_2 _ "(" _ arg1:Terms _ "," _ arg2:Terms _ ")"
 
 Math_Fun_1 = (
 	"abs" / "sqrt" / "cbrt" / "ln" /
-	"cos" / "sin" / "tan" / "cot" / "sec" / "csc")
+	"sin" / "cos" / "tan" / "cot" / "sec" / "csc")
 Math_Fun_2 = "root" / "log"
 
 Math_Const = ("pi" / "π" / "tau" / "τ" / "e")

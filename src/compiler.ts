@@ -15,7 +15,7 @@ out;
 
 let builtins = [
 	"print", "true", "false", "call", "len", "map", "filter", "reduce", "times", "range", "srange", "enum",
-	"pi", "e", "tau",
+	"pi", "tau", "e",
 	"sin", "cos", "tan", "cot", "sec", "csc",
 	"show_expr", "eval", "num_diff", "set_size", "set_zoom"
 ];

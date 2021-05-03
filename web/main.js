@@ -1,6 +1,6 @@
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.main = f()}})(function(){var define,module,exports;return (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
 exports.__esModule = true;
-exports.__ops = exports.__set_zoom = exports.__set_size = exports.__num_diff = exports.__eval = exports.__show_expr = exports.__tan = exports.__cos = exports.__sin = exports.__e = exports.__pi = exports.__enum = exports.__srange = exports.__range = exports.__times = exports.__reduce = exports.__filter = exports.__map = exports.__len = exports.__call = exports.__false = exports.__true = exports.__print = void 0;
+exports.__ops = exports.__set_zoom = exports.__set_size = exports.__num_diff = exports.__eval = exports.__show_expr = exports.__csc = exports.__sec = exports.__cot = exports.__tan = exports.__cos = exports.__sin = exports.__e = exports.__tau = exports.__pi = exports.__enum = exports.__srange = exports.__range = exports.__times = exports.__reduce = exports.__filter = exports.__map = exports.__len = exports.__call = exports.__false = exports.__true = exports.__print = void 0;
 var utils = require("./utils");
 var expr = require("./expr");
 function __print(st, out) {
@@ -93,6 +93,10 @@ function __pi(st) {
     st.push(Math.PI);
 }
 exports.__pi = __pi;
+function __tau(st) {
+    st.push(2 * Math.PI);
+}
+exports.__tau = __tau;
 function __e(st) {
     st.push(Math.E);
 }
@@ -109,6 +113,18 @@ function __tan(st) {
     st.push(Math.tan(st.pop()));
 }
 exports.__tan = __tan;
+function __cot(st) {
+    st.push(1 / Math.tan(st.pop()));
+}
+exports.__cot = __cot;
+function __sec(st) {
+    st.push(1 / Math.cos(st.pop()));
+}
+exports.__sec = __sec;
+function __csc(st) {
+    st.push(1 / Math.sin(st.pop()));
+}
+exports.__csc = __csc;
 function __show_expr(st) {
     st.push("{" + expr.stringify(st.pop()) + "}");
 }
@@ -243,7 +259,7 @@ var prelude = "with(main.builtins) {\n\nlet st = [];\nlet out = [];\n";
 var postlude = "\n\nout = [...out, ...st];\nout;\n}";
 var builtins = [
     "print", "true", "false", "call", "len", "map", "filter", "reduce", "times", "range", "srange", "enum",
-    "pi", "e", "tau",
+    "pi", "tau", "e",
     "sin", "cos", "tan", "cot", "sec", "csc",
     "show_expr", "eval", "num_diff", "set_size", "set_zoom"
 ];
@@ -372,8 +388,8 @@ function eval_at(ast, x) {
                 case "sqrt": return Math.sqrt(eval_at(ast.args[0], x));
                 case "cbrt": return Math.cbrt(eval_at(ast.args[0], x));
                 case "ln": return Math.log(eval_at(ast.args[0], x));
-                case "cos": return Math.cos(eval_at(ast.args[0], x));
                 case "sin": return Math.sin(eval_at(ast.args[0], x));
+                case "cos": return Math.cos(eval_at(ast.args[0], x));
                 case "tan": return Math.tan(eval_at(ast.args[0], x));
                 case "cot": return 1 / Math.tan(eval_at(ast.args[0], x));
                 case "sec": return 1 / Math.cos(eval_at(ast.args[0], x));
@@ -800,7 +816,7 @@ function peg$parse(input, options) {
                 left: { type: types.Expr_Type.num, data: 0 },
                 right: val
             });
-    }, peg$c130 = "(", peg$c131 = peg$literalExpectation("(", false), peg$c132 = function (data) { return data; }, peg$c133 = function (name, arg) { return { type: types.Expr_Type.call, name: name, args: [arg] }; }, peg$c134 = ",", peg$c135 = peg$literalExpectation(",", false), peg$c136 = function (name, arg1, arg2) { return { type: types.Expr_Type.call, name: name, args: [arg1, arg2] }; }, peg$c137 = "abs", peg$c138 = peg$literalExpectation("abs", false), peg$c139 = "sqrt", peg$c140 = peg$literalExpectation("sqrt", false), peg$c141 = "cbrt", peg$c142 = peg$literalExpectation("cbrt", false), peg$c143 = "ln", peg$c144 = peg$literalExpectation("ln", false), peg$c145 = "cos", peg$c146 = peg$literalExpectation("cos", false), peg$c147 = "sin", peg$c148 = peg$literalExpectation("sin", false), peg$c149 = "tan", peg$c150 = peg$literalExpectation("tan", false), peg$c151 = "cot", peg$c152 = peg$literalExpectation("cot", false), peg$c153 = "sec", peg$c154 = peg$literalExpectation("sec", false), peg$c155 = "csc", peg$c156 = peg$literalExpectation("csc", false), peg$c157 = "root", peg$c158 = peg$literalExpectation("root", false), peg$c159 = "log", peg$c160 = peg$literalExpectation("log", false), peg$c161 = "pi", peg$c162 = peg$literalExpectation("pi", false), peg$c163 = "\u03C0", peg$c164 = peg$literalExpectation("\u03C0", false), peg$c165 = "tau", peg$c166 = peg$literalExpectation("tau", false), peg$c167 = "\u03C4", peg$c168 = peg$literalExpectation("\u03C4", false), peg$c169 = "e", peg$c170 = peg$literalExpectation("e", false), peg$c171 = function () {
+    }, peg$c130 = "(", peg$c131 = peg$literalExpectation("(", false), peg$c132 = function (data) { return data; }, peg$c133 = function (name, arg) { return { type: types.Expr_Type.call, name: name, args: [arg] }; }, peg$c134 = ",", peg$c135 = peg$literalExpectation(",", false), peg$c136 = function (name, arg1, arg2) { return { type: types.Expr_Type.call, name: name, args: [arg1, arg2] }; }, peg$c137 = "abs", peg$c138 = peg$literalExpectation("abs", false), peg$c139 = "sqrt", peg$c140 = peg$literalExpectation("sqrt", false), peg$c141 = "cbrt", peg$c142 = peg$literalExpectation("cbrt", false), peg$c143 = "ln", peg$c144 = peg$literalExpectation("ln", false), peg$c145 = "sin", peg$c146 = peg$literalExpectation("sin", false), peg$c147 = "cos", peg$c148 = peg$literalExpectation("cos", false), peg$c149 = "tan", peg$c150 = peg$literalExpectation("tan", false), peg$c151 = "cot", peg$c152 = peg$literalExpectation("cot", false), peg$c153 = "sec", peg$c154 = peg$literalExpectation("sec", false), peg$c155 = "csc", peg$c156 = peg$literalExpectation("csc", false), peg$c157 = "root", peg$c158 = peg$literalExpectation("root", false), peg$c159 = "log", peg$c160 = peg$literalExpectation("log", false), peg$c161 = "pi", peg$c162 = peg$literalExpectation("pi", false), peg$c163 = "\u03C0", peg$c164 = peg$literalExpectation("\u03C0", false), peg$c165 = "tau", peg$c166 = peg$literalExpectation("tau", false), peg$c167 = "\u03C4", peg$c168 = peg$literalExpectation("\u03C4", false), peg$c169 = "e", peg$c170 = peg$literalExpectation("e", false), peg$c171 = function () {
         return { type: types.Expr_Type.num, data: {
                 pi: Math.PI, π: Math.PI,
                 tau: 2 * Math.PI, τ: 2 * Math.PI,
