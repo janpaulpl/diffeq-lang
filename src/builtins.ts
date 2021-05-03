@@ -116,7 +116,7 @@ function __show_expr(st: any[]) {
 function __num_diff(st: any[]) {
 	let ast = st.pop();
 	let x = st.pop();
-	let h = 0.0000009;
+	let h = 1e-10;
 	
 	// Ratio of difference
 	st.push((expr.eval_at(ast, x + h) - expr.eval_at(ast, x)) / h);

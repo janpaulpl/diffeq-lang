@@ -116,7 +116,7 @@ exports.__show_expr = __show_expr;
 function __num_diff(st) {
     var ast = st.pop();
     var x = st.pop();
-    var h = 0.0000009;
+    var h = 1e-10;
     // Ratio of difference
     st.push((expr.eval_at(ast, x + h) - expr.eval_at(ast, x)) / h);
 }
