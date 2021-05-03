@@ -101,6 +101,7 @@ function derive(ast: types.Expr): types.Expr {
 			};
 
 		// Exponentiation will only work for numerical exponents 
+		// This has chain rule but it can be abstracted better later
 		
 		case types.Expr_Type.pow:
 			return {
