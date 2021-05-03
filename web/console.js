@@ -5,9 +5,9 @@ let travel = 1;
 window.vars = {};
 window.funs = {};
 window.res_hist = [];
-window.graph_w = 200;
-window.graph_h = 200;
-window.graph_zoom = 10;
+window.graph_w = 400;
+window.graph_h = 400;
+window.graph_zoom = 40;
 let res_cou = 0;
 
 $(function() {
