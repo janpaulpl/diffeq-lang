@@ -101,11 +101,13 @@ function derive(ast: types.Expr): types.Expr {
 			};
 		// for pow: left := base, right := exponent
 		// Multiplication
-			// Multiplication
-				// Derivative left
-				// left
-		// right
-
+			// Multiplication	
+				// Exponentiate
+					// left
+					// num(1-right)
+				// right
+			// Derivative left
+		
 		case types.Expr_Type.expr_var:
 			return num(1);
 		
