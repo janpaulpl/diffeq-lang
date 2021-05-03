@@ -35,16 +35,16 @@ type Instr =
 	{type: Instr_Type.anon, args: string[], body: Block};
 
 enum Expr_Type {
-	"+", "-", "*", "/", "^",
+	add, sub, mul, div, pow,
 	call, expr_var, num
 }
 
 type Expr = (
-	{type: Expr_Type["+"], left: Expr, right: Expr} |
-	{type: Expr_Type["-"], left: Expr, right: Expr} |
-	{type: Expr_Type["*"], left: Expr, right: Expr} |
-	{type: Expr_Type["/"], left: Expr, right: Expr} |
-	{type: Expr_Type["^"], left: Expr, right: Expr} |
+	{type: Expr_Type.add, left: Expr, right: Expr} |
+	{type: Expr_Type.sub, left: Expr, right: Expr} |
+	{type: Expr_Type.mul, left: Expr, right: Expr} |
+	{type: Expr_Type.div, left: Expr, right: Expr} |
+	{type: Expr_Type.pow, left: Expr, right: Expr} |
 	{type: Expr_Type.call, name: string, args: Expr[]} |
 	{type: Expr_Type.expr_var} |
 	{type: Expr_Type.num, data: number}

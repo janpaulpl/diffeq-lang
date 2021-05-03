@@ -98,7 +98,7 @@ Terms = prod:Prods prods:(_ [+\-] _ Terms)? _
 		!prods
 			? prod
 			: {
-				type: types.Expr_Type[prods[1]],
+				type: prods[1] == "+" ? types.Expr_Type.add : types.Expr_Type.sub,
 				left: prod,
 				right: prods[3]
 			}
@@ -109,7 +109,7 @@ Prods = exp:Exps exps:(_ [*/]? _ Prods)? _
 		!exps
 			? exp
 			: {
-				type: exps[1] == "/" ? types.Expr_Type["/"] : types.Expr_Type["*"],
+				type: exps[1] == "/" ? types.Expr_Type.div : types.Expr_Type.mul,
 				left: exp,
 				right: exps[3]
 			}
@@ -120,7 +120,7 @@ Exps = final:Final finals:(_ "^" _ Exps)? _
 		!finals
 			? final
 			: {
-				type: types.Expr_Type["^"],
+				type: types.Expr_Type.pow,
 				left: final,
 				right: finals[3]
 			}
@@ -137,7 +137,7 @@ Final
 			!pos
 				? val
 				: {
-					type: types.Expr_Type["-"],
+					type: types.Expr_Type.sub,
 					left: {type: types.Expr_Type.num, data: 0},
 					right: val
 				}

@@ -199,7 +199,9 @@ let __ops = {
 		st.push(st.pop() % st.pop());
 	},
 	
-	// Derivation: "'"(st: any[]) { }
+	"'"(st: any[]) {
+		st.push(expr.derive(st.pop()));
+	},
 	
 	// List indexing
 	

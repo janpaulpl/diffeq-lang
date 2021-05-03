@@ -1,16 +1,20 @@
 import types = require("./types");
 
+function num(n: number): types.Expr {
+	return {type: types.Expr_Type.num, data: n}
+}
+
 function eval_at(ast: types.Expr, x: number): number {
 	switch(ast.type) {
-		case types.Expr_Type["+"]:
+		case types.Expr_Type.add:
 			return eval_at(ast.left, x) + eval_at(ast.right, x);
-		case types.Expr_Type["-"]:
+		case types.Expr_Type.sub:
 			return eval_at(ast.left, x) - eval_at(ast.right, x);
-		case types.Expr_Type["*"]:
+		case types.Expr_Type.mul:
 			return eval_at(ast.left, x) * eval_at(ast.right, x);
-		case types.Expr_Type["/"]:
+		case types.Expr_Type.div:
 			return eval_at(ast.left, x) / eval_at(ast.right, x);
-		case types.Expr_Type["^"]:
+		case types.Expr_Type.pow:
 			return eval_at(ast.left, x) ** eval_at(ast.right, x);
 		case types.Expr_Type.call:
 			switch(ast.name) {
@@ -42,8 +46,72 @@ function eval_at(ast: types.Expr, x: number): number {
 	}
 }
 
-function derive(expr: types.Expr): types.Expr {
-	return expr;
+function derive(ast: types.Expr): types.Expr {
+	switch(ast.type) {
+		case types.Expr_Type.add:
+			return {
+				type: types.Expr_Type.add,
+				left: derive(ast.left),
+				right: derive(ast.right)
+			};
+		
+		case types.Expr_Type.sub:
+			return {
+				type: types.Expr_Type.sub,
+				left: derive(ast.left),
+				right: derive(ast.right)
+			};
+		
+		case types.Expr_Type.mul:
+			return {
+				type: types.Expr_Type.add,
+				left: {
+					type: types.Expr_Type.mul,
+					left: derive(ast.left),
+					right: ast.right
+				},
+				right: {
+					type: types.Expr_Type.mul,
+					left: ast.left,
+					right: derive(ast.right)
+				}
+			};
+		
+		case types.Expr_Type.div:
+			return {
+				type: types.Expr_Type.div,
+				left: {
+					type: types.Expr_Type.sub,
+					left: {
+						type: types.Expr_Type.mul,
+						left: derive(ast.left),
+						right: ast.right
+					},
+					right: {
+						type: types.Expr_Type.mul,
+						left: ast.left,
+						right: derive(ast.right)
+					}
+				},
+				right: {
+					type: types.Expr_Type.pow,
+					left: ast.right,
+					right: num(2)
+				}
+			};
+		// for pow: left := base, right := exponent
+		// Multiplication
+			// Multiplication
+				// Derivative left
+				// left
+		// right
+
+		case types.Expr_Type.expr_var:
+			return num(1);
+		
+		case types.Expr_Type.num:
+			return num(0);
+	}
 }
 
 export {eval_at, derive};

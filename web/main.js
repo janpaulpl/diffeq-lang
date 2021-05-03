@@ -112,7 +112,7 @@ exports.__tan = __tan;
 function __num_diff(st) {
     var ast = st.pop();
     var x = st.pop();
-    var h = .0000009;
+    var h = 0.0000009;
     // Ratio of difference
     st.push((expr.eval_at(ast, x + h) - expr.eval_at(ast, x)) / h);
 }
@@ -178,7 +178,9 @@ var __ops = {
     "%": function (st) {
         st.push(st.pop() % st.pop());
     },
-    // Derivation: "'"(st: any[]) { }
+    "'": function (st) {
+        st.push(expr.derive(st.pop()));
+    },
     // List indexing
     "@": function (st) {
         st.push(st.pop()[st.pop()]);
@@ -315,17 +317,20 @@ function tabs(indent) {
 exports.__esModule = true;
 exports.derive = exports.eval_at = void 0;
 var types = require("./types");
+function num(n) {
+    return { type: types.Expr_Type.num, data: n };
+}
 function eval_at(ast, x) {
     switch (ast.type) {
-        case types.Expr_Type["+"]:
+        case types.Expr_Type.add:
             return eval_at(ast.left, x) + eval_at(ast.right, x);
-        case types.Expr_Type["-"]:
+        case types.Expr_Type.sub:
             return eval_at(ast.left, x) - eval_at(ast.right, x);
-        case types.Expr_Type["*"]:
+        case types.Expr_Type.mul:
             return eval_at(ast.left, x) * eval_at(ast.right, x);
-        case types.Expr_Type["/"]:
+        case types.Expr_Type.div:
             return eval_at(ast.left, x) / eval_at(ast.right, x);
-        case types.Expr_Type["^"]:
+        case types.Expr_Type.pow:
             return Math.pow(eval_at(ast.left, x), eval_at(ast.right, x));
         case types.Expr_Type.call:
             switch (ast.name) {
@@ -352,8 +357,69 @@ function eval_at(ast, x) {
     }
 }
 exports.eval_at = eval_at;
-function derive(expr) {
-    return expr;
+function derive(ast) {
+    switch (ast.type) {
+        case types.Expr_Type.add:
+            return {
+                type: types.Expr_Type.add,
+                left: derive(ast.left),
+                right: derive(ast.right)
+            };
+        case types.Expr_Type.sub:
+            return {
+                type: types.Expr_Type.sub,
+                left: derive(ast.left),
+                right: derive(ast.right)
+            };
+        case types.Expr_Type.mul:
+            return {
+                type: types.Expr_Type.add,
+                left: {
+                    type: types.Expr_Type.mul,
+                    left: derive(ast.left),
+                    right: ast.right
+                },
+                right: {
+                    type: types.Expr_Type.mul,
+                    left: ast.left,
+                    right: derive(ast.right)
+                }
+            };
+        case types.Expr_Type.div:
+            return {
+                type: types.Expr_Type.div,
+                left: {
+                    type: types.Expr_Type.sub,
+                    left: {
+                        type: types.Expr_Type.mul,
+                        left: derive(ast.left),
+                        right: ast.right
+                    },
+                    right: {
+                        type: types.Expr_Type.mul,
+                        left: ast.left,
+                        right: derive(ast.right)
+                    }
+                },
+                right: {
+                    type: types.Expr_Type.pow,
+                    left: ast.right,
+                    right: num(2)
+                }
+            };
+        // for pow: left := base, right := exponent
+        // Multiplication
+        //Derivative left
+        //Exponentiate
+        //Multiplication
+        //left
+        //right
+        //num(1-right)
+        case types.Expr_Type.expr_var:
+            return num(1);
+        case types.Expr_Type.num:
+            return num(0);
+    }
 }
 exports.derive = derive;
 
@@ -519,7 +585,7 @@ function peg$parse(input, options) {
         return (!prods
             ? prod
             : {
-                type: types.Expr_Type[prods[1]],
+                type: prods[1] == "+" ? types.Expr_Type.add : types.Expr_Type.sub,
                 left: prod,
                 right: prods[3]
             });
@@ -527,7 +593,7 @@ function peg$parse(input, options) {
         return (!exps
             ? exp
             : {
-                type: exps[1] == "/" ? types.Expr_Type["/"] : types.Expr_Type["*"],
+                type: exps[1] == "/" ? types.Expr_Type.div : types.Expr_Type.mul,
                 left: exp,
                 right: exps[3]
             });
@@ -535,7 +601,7 @@ function peg$parse(input, options) {
         return (!finals
             ? final
             : {
-                type: types.Expr_Type["^"],
+                type: types.Expr_Type.pow,
                 left: final,
                 right: finals[3]
             });
@@ -543,7 +609,7 @@ function peg$parse(input, options) {
         return (!pos
             ? val
             : {
-                type: types.Expr_Type["-"],
+                type: types.Expr_Type.sub,
                 left: { type: types.Expr_Type.num, data: 0 },
                 right: val
             });
@@ -3907,11 +3973,11 @@ var Op;
 exports.Op = Op;
 var Expr_Type;
 (function (Expr_Type) {
-    Expr_Type[Expr_Type["+"] = 0] = "+";
-    Expr_Type[Expr_Type["-"] = 1] = "-";
-    Expr_Type[Expr_Type["*"] = 2] = "*";
-    Expr_Type[Expr_Type["/"] = 3] = "/";
-    Expr_Type[Expr_Type["^"] = 4] = "^";
+    Expr_Type[Expr_Type["add"] = 0] = "add";
+    Expr_Type[Expr_Type["sub"] = 1] = "sub";
+    Expr_Type[Expr_Type["mul"] = 2] = "mul";
+    Expr_Type[Expr_Type["div"] = 3] = "div";
+    Expr_Type[Expr_Type["pow"] = 4] = "pow";
     Expr_Type[Expr_Type["call"] = 5] = "call";
     Expr_Type[Expr_Type["expr_var"] = 6] = "expr_var";
     Expr_Type[Expr_Type["num"] = 7] = "num";
