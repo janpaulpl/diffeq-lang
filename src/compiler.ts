@@ -17,7 +17,7 @@ let builtins = [
 	"print", "true", "false", "call", "len", "map", "filter", "reduce", "times", "range", "srange", "enum",
 	"pi", "e", "tau",
 	"sin", "cos", "tan", "cot", "sec", "csc",
-	"show_expr", "num_diff", "set_size", "set_zoom"
+	"show_expr", "eval", "num_diff", "set_size", "set_zoom"
 ];
 
 function compile(ast: types.Block): string {

@@ -113,6 +113,13 @@ function __show_expr(st: any[]) {
 	st.push(`{${expr.stringify(st.pop())}}`);
 }
 
+function __eval(st: any[]) {
+	let ast = st.pop();
+	let x = st.pop();
+	
+	st.push(expr.eval_at(ast, x));
+}
+
 function __num_diff(st: any[]) {
 	let ast = st.pop();
 	let x = st.pop();
@@ -250,4 +257,4 @@ let __ops = {
 	}
 };
 
-export {__print, __true, __false, __call, __len, __map, __filter, __reduce, __times, __range, __srange, __enum, __pi, __e, __sin, __cos, __tan, __show_expr, __num_diff, __set_size, __set_zoom, __ops};
+export {__print, __true, __false, __call, __len, __map, __filter, __reduce, __times, __range, __srange, __enum, __pi, __e, __sin, __cos, __tan, __show_expr, __eval, __num_diff, __set_size, __set_zoom, __ops};
