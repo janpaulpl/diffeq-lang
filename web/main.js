@@ -1,6 +1,6 @@
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.main = f()}})(function(){var define,module,exports;return (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
 exports.__esModule = true;
-exports.__ops = exports.__num_diff = exports.__tan = exports.__cos = exports.__sin = exports.__e = exports.__pi = exports.__enum = exports.__srange = exports.__range = exports.__times = exports.__reduce = exports.__filter = exports.__map = exports.__len = exports.__call = exports.__false = exports.__true = exports.__print = void 0;
+exports.__ops = exports.__num_diff = exports.__show_expr = exports.__tan = exports.__cos = exports.__sin = exports.__e = exports.__pi = exports.__enum = exports.__srange = exports.__range = exports.__times = exports.__reduce = exports.__filter = exports.__map = exports.__len = exports.__call = exports.__false = exports.__true = exports.__print = void 0;
 var utils = require("./utils");
 var expr = require("./expr");
 function __print(st, out) {
@@ -109,6 +109,10 @@ function __tan(st) {
     st.push(Math.tan(st.pop()));
 }
 exports.__tan = __tan;
+function __show_expr(st) {
+    st.push("{" + expr.stringify(st.pop()) + "}");
+}
+exports.__show_expr = __show_expr;
 function __num_diff(st) {
     var ast = st.pop();
     var x = st.pop();
@@ -221,7 +225,7 @@ var postlude = "\n\nout = [...out, ...st];\nout;\n}";
 var builtins = [
     "print", "true", "false", "call", "len", "map", "filter", "reduce", "times", "range", "srange", "enum",
     "pi", "e", "tau",
-    "sin", "cos", "tan", "cot", "sec", "csc", "num_diff"
+    "sin", "cos", "tan", "cot", "sec", "csc", "show_expr", "num_diff"
 ];
 function compile(ast) {
     return prelude + compile_rec(ast, 0, [], [], []) + postlude;
@@ -270,7 +274,7 @@ function compile_rec(ast, indent, locals, vars, funs) {
             case types.Instr_Type.str:
                 return "st.push(\"" + instr.data + "\");";
             case types.Instr_Type.expr:
-                return "st.push(" + JSON.stringify(instr.data) + ")";
+                return "st.push(new main.Expr(" + JSON.stringify(instr.data) + "))";
             case types.Instr_Type["if"]:
                 return instr.branches.map(function (branch) {
                     return (branch.cond
@@ -315,10 +319,19 @@ function tabs(indent) {
 
 },{"./types":6}],3:[function(require,module,exports){
 exports.__esModule = true;
-exports.derive = exports.eval_at = void 0;
+exports.stringify = exports.derive = exports.eval_at = exports.Expr = void 0;
 var types = require("./types");
+var Expr = /** @class */ (function () {
+    function Expr(ast) {
+        for (var key in ast) {
+            this[key] = ast[key];
+        }
+    }
+    return Expr;
+}());
+exports.Expr = Expr;
 function num(n) {
-    return { type: types.Expr_Type.num, data: n };
+    return new Expr({ type: types.Expr_Type.num, data: n });
 }
 function eval_at(ast, x) {
     switch (ast.type) {
@@ -360,19 +373,19 @@ exports.eval_at = eval_at;
 function derive(ast) {
     switch (ast.type) {
         case types.Expr_Type.add:
-            return {
+            return new Expr({
                 type: types.Expr_Type.add,
                 left: derive(ast.left),
                 right: derive(ast.right)
-            };
+            });
         case types.Expr_Type.sub:
-            return {
+            return new Expr({
                 type: types.Expr_Type.sub,
                 left: derive(ast.left),
                 right: derive(ast.right)
-            };
+            });
         case types.Expr_Type.mul:
-            return {
+            return new Expr({
                 type: types.Expr_Type.add,
                 left: {
                     type: types.Expr_Type.mul,
@@ -384,9 +397,9 @@ function derive(ast) {
                     left: ast.left,
                     right: derive(ast.right)
                 }
-            };
+            });
         case types.Expr_Type.div:
-            return {
+            return new Expr({
                 type: types.Expr_Type.div,
                 left: {
                     type: types.Expr_Type.sub,
@@ -406,15 +419,27 @@ function derive(ast) {
                     left: ast.right,
                     right: num(2)
                 }
-            };
-        // for pow: left := base, right := exponent
-        // Multiplication
-        //Derivative left
-        //Exponentiate
-        //Multiplication
-        //left
-        //right
-        //num(1-right)
+            });
+        // Exponentiation will only work for numerical exponents 
+        // This has chain rule but it can be abstracted better later
+        case types.Expr_Type.pow:
+            return new Expr({
+                type: types.Expr_Type.mul,
+                left: {
+                    type: types.Expr_Type.mul,
+                    left: {
+                        type: types.Expr_Type.pow,
+                        left: ast.left,
+                        right: {
+                            type: types.Expr_Type.sub,
+                            left: ast.right,
+                            right: num(1)
+                        }
+                    },
+                    right: ast.right
+                },
+                right: derive(ast.left)
+            });
         case types.Expr_Type.expr_var:
             return num(1);
         case types.Expr_Type.num:
@@ -422,15 +447,38 @@ function derive(ast) {
     }
 }
 exports.derive = derive;
+function stringify(ast) {
+    switch (ast.type) {
+        case types.Expr_Type.add:
+            return "(" + stringify(ast.left) + " + " + stringify(ast.right) + ")";
+        case types.Expr_Type.sub:
+            return "(" + stringify(ast.left) + " - " + stringify(ast.right) + ")";
+        case types.Expr_Type.mul:
+            return "(" + stringify(ast.left) + " * " + stringify(ast.right) + ")";
+        case types.Expr_Type.div:
+            return "(" + stringify(ast.left) + " / " + stringify(ast.right) + ")";
+        case types.Expr_Type.pow:
+            return "(" + stringify(ast.left) + " ^ " + stringify(ast.right) + ")";
+        case types.Expr_Type.call:
+            return ast.name + "(" + ast.args.map(stringify).join(", ") + ")";
+        case types.Expr_Type.expr_var:
+            return "x";
+        case types.Expr_Type.num:
+            return ast.data.toString();
+    }
+}
+exports.stringify = stringify;
 
 },{"./types":6}],4:[function(require,module,exports){
 exports.__esModule = true;
-exports.to_type = exports.builtins = exports.err_to_str = exports.run = void 0;
+exports.Expr_Type = exports.stringify_expr = exports.eval_at = exports.Expr = exports.to_type = exports.builtins = exports.err_to_str = exports.run = void 0;
 var parser = require("./parser");
 var compiler = require("./compiler");
 var builtins = require("./builtins");
 exports.builtins = builtins;
 var utils = require("./utils");
+var expr = require("./expr");
+var types = require("./types");
 function run(prog) {
     var comp = compiler.compile(parser.parse(prog));
     console.log(comp);
@@ -443,8 +491,17 @@ var err_to_str = function (err) { return !(err instanceof Error)
 exports.err_to_str = err_to_str;
 var to_type = utils.to_type;
 exports.to_type = to_type;
+var Expr = expr.Expr;
+exports.Expr = Expr;
+var eval_at = expr.eval_at;
+exports.eval_at = eval_at;
+var stringify_expr = expr.stringify;
+exports.stringify_expr = stringify_expr;
+var Expr_Type = {};
+exports.Expr_Type = Expr_Type;
+Object.assign(Expr_Type, types.Expr_Type);
 
-},{"./builtins":1,"./compiler":2,"./parser":5,"./utils":7}],5:[function(require,module,exports){
+},{"./builtins":1,"./compiler":2,"./expr":3,"./parser":5,"./types":6,"./utils":7}],5:[function(require,module,exports){
 var __spreadArrays = (this && this.__spreadArrays) || function () {
     for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
     for (var r = Array(s), k = 0, i = 0; i < il; i++)

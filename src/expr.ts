@@ -1,7 +1,15 @@
 import types = require("./types");
 
+class Expr {
+	constructor(ast: types.Expr) {
+		for(let key in ast) {
+			this[key] = ast[key];
+		}
+	}
+}
+
 function num(n: number): types.Expr {
-	return {type: types.Expr_Type.num, data: n}
+	return <types.Expr> new Expr({type: types.Expr_Type.num, data: n});
 }
 
 function eval_at(ast: types.Expr, x: number): number {
@@ -49,21 +57,21 @@ function eval_at(ast: types.Expr, x: number): number {
 function derive(ast: types.Expr): types.Expr {
 	switch(ast.type) {
 		case types.Expr_Type.add:
-			return {
+			return <types.Expr> new Expr({
 				type: types.Expr_Type.add,
 				left: derive(ast.left),
 				right: derive(ast.right)
-			};
+			});
 		
 		case types.Expr_Type.sub:
-			return {
+			return <types.Expr> new Expr ({
 				type: types.Expr_Type.sub,
 				left: derive(ast.left),
 				right: derive(ast.right)
-			};
+			});
 		
 		case types.Expr_Type.mul:
-			return {
+			return <types.Expr> new Expr({
 				type: types.Expr_Type.add,
 				left: {
 					type: types.Expr_Type.mul,
@@ -75,10 +83,10 @@ function derive(ast: types.Expr): types.Expr {
 					left: ast.left,
 					right: derive(ast.right)
 				}
-			};
+			});
 		
 		case types.Expr_Type.div:
-			return {
+			return <types.Expr> new Expr({
 				type: types.Expr_Type.div,
 				left: {
 					type: types.Expr_Type.sub,
@@ -98,13 +106,13 @@ function derive(ast: types.Expr): types.Expr {
 					left: ast.right,
 					right: num(2)
 				}
-			};
+			});
 
 		// Exponentiation will only work for numerical exponents 
 		// This has chain rule but it can be abstracted better later
 		
 		case types.Expr_Type.pow:
-			return {
+			return <types.Expr> new Expr({
 				type: types.Expr_Type.mul,
 				left: {
 					type: types.Expr_Type.mul,
@@ -113,14 +121,14 @@ function derive(ast: types.Expr): types.Expr {
 						left: ast.left,
 						right: { 
 							type: types.Expr_Type.sub,
-							left: num(1),
-							right: ast.right
+							left: ast.right,
+							right: num(1)
 						},
 					},
 					right: ast.right
 				},
 				right: derive(ast.left)
-			};
+			});
 
 		case types.Expr_Type.expr_var:
 			return num(1);
@@ -130,4 +138,28 @@ function derive(ast: types.Expr): types.Expr {
 	}
 }
 
-export {eval_at, derive};
+function stringify(ast: types.Expr): string {
+	switch(ast.type) {
+		case types.Expr_Type.add:
+			return `(${stringify(ast.left)} + ${stringify(ast.right)})`;
+		case types.Expr_Type.sub:
+			return `(${stringify(ast.left)} - ${stringify(ast.right)})`;
+		case types.Expr_Type.mul:
+			return `(${stringify(ast.left)} * ${stringify(ast.right)})`;
+		case types.Expr_Type.div:
+			return `(${stringify(ast.left)} / ${stringify(ast.right)})`;
+		case types.Expr_Type.pow:
+			return `(${stringify(ast.left)} ^ ${stringify(ast.right)})`;
+		
+		case types.Expr_Type.call:
+			return `${ast.name}(${ast.args.map(stringify).join(", ")})`;
+		
+		case types.Expr_Type.expr_var:
+			return "x";
+		
+		case types.Expr_Type.num:
+			return ast.data.toString();
+	}
+}
+
+export {Expr, eval_at, derive, stringify};

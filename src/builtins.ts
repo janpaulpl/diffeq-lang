@@ -109,6 +109,10 @@ function __tan(st: any[]) {
 	st.push(Math.tan(st.pop()));
 }
 
+function __show_expr(st: any[]) {
+	st.push(`{${expr.stringify(st.pop())}}`);
+}
+
 function __num_diff(st: any[]) {
 	let ast = st.pop();
 	let x = st.pop();
@@ -233,4 +237,4 @@ let __ops = {
 	}
 };
 
-export {__print, __true, __false, __call, __len, __map, __filter, __reduce, __times, __range, __srange, __enum, __pi, __e, __sin, __cos, __tan, __num_diff, __ops};
+export {__print, __true, __false, __call, __len, __map, __filter, __reduce, __times, __range, __srange, __enum, __pi, __e, __sin, __cos, __tan, __show_expr, __num_diff, __ops};

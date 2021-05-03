@@ -55,6 +55,9 @@ declare global {
 		vars: {[name: string]: any};
 		funs: {[name: string]: (st: any[], out: any[]) => void};
 		res_hist: any[];
+		graph_w: number;
+		graph_h: number;
+		graph_zoom: number;
 	}
 }
 
