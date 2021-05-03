@@ -192,7 +192,7 @@ var __ops = {
         st.push(st.pop() % st.pop());
     },
     "'": function (st) {
-        st.push(expr.derive(st.pop()));
+        st.push(expr.simplify(expr.derive(st.pop())));
     },
     // List indexing
     "@": function (st) {
@@ -329,7 +329,7 @@ function tabs(indent) {
 
 },{"./types":6}],3:[function(require,module,exports){
 exports.__esModule = true;
-exports.stringify = exports.derive = exports.eval_at = exports.Expr = void 0;
+exports.stringify = exports.simplify = exports.derive = exports.eval_at = exports.Expr = void 0;
 var types = require("./types");
 var Expr = /** @class */ (function () {
     function Expr(ast) {
@@ -341,7 +341,7 @@ var Expr = /** @class */ (function () {
 }());
 exports.Expr = Expr;
 function num(n) {
-    return new Expr({ type: types.Expr_Type.num, data: n });
+    return wrap_expr({ type: types.Expr_Type.num, data: n });
 }
 function eval_at(ast, x) {
     switch (ast.type) {
@@ -383,19 +383,19 @@ exports.eval_at = eval_at;
 function derive(ast) {
     switch (ast.type) {
         case types.Expr_Type.add:
-            return new Expr({
+            return wrap_expr({
                 type: types.Expr_Type.add,
                 left: derive(ast.left),
                 right: derive(ast.right)
             });
         case types.Expr_Type.sub:
-            return new Expr({
+            return wrap_expr({
                 type: types.Expr_Type.sub,
                 left: derive(ast.left),
                 right: derive(ast.right)
             });
         case types.Expr_Type.mul:
-            return new Expr({
+            return wrap_expr({
                 type: types.Expr_Type.add,
                 left: {
                     type: types.Expr_Type.mul,
@@ -409,7 +409,7 @@ function derive(ast) {
                 }
             });
         case types.Expr_Type.div:
-            return new Expr({
+            return wrap_expr({
                 type: types.Expr_Type.div,
                 left: {
                     type: types.Expr_Type.sub,
@@ -433,7 +433,7 @@ function derive(ast) {
         // Exponentiation will only work for numerical exponents 
         // This has chain rule but it can be abstracted better later
         case types.Expr_Type.pow:
-            return new Expr({
+            return wrap_expr({
                 type: types.Expr_Type.mul,
                 left: {
                     type: types.Expr_Type.mul,
@@ -457,6 +457,113 @@ function derive(ast) {
     }
 }
 exports.derive = derive;
+function simplify(ast) {
+    var left;
+    var right;
+    switch (ast.type) {
+        case types.Expr_Type.add:
+            left = simplify(ast.left);
+            right = simplify(ast.right);
+            if (left.type == types.Expr_Type.num &&
+                right.type == types.Expr_Type.num) {
+                return num(left.data + right.data);
+            }
+            else if (left.type == types.Expr_Type.num &&
+                left.data == 0) {
+                return right;
+            }
+            else if (right.type == types.Expr_Type.num &&
+                right.data == 0) {
+                return left;
+            }
+            return wrap_expr({
+                type: types.Expr_Type.add,
+                left: left, right: right
+            });
+        case types.Expr_Type.sub:
+            left = simplify(ast.left);
+            right = simplify(ast.right);
+            if (left.type == types.Expr_Type.num &&
+                right.type == types.Expr_Type.num) {
+                return num(left.data - right.data);
+            }
+            else if (right.type == types.Expr_Type.num &&
+                right.data == 0) {
+                return left;
+            }
+            return wrap_expr({
+                type: types.Expr_Type.sub,
+                left: left, right: right
+            });
+        case types.Expr_Type.mul:
+            left = simplify(ast.left);
+            right = simplify(ast.right);
+            if (left.type == types.Expr_Type.num &&
+                right.type == types.Expr_Type.num) {
+                return num(left.data * right.data);
+            }
+            else if (left.type == types.Expr_Type.num &&
+                left.data == 1) {
+                return right;
+            }
+            else if (right.type == types.Expr_Type.num &&
+                right.data == 1) {
+                return left;
+            }
+            else if (left.type == types.Expr_Type.num &&
+                left.data == 0) {
+                return num(0);
+            }
+            else if (right.type == types.Expr_Type.num &&
+                right.data == 0) {
+                return num(0);
+            }
+            return wrap_expr({
+                type: types.Expr_Type.mul,
+                left: left, right: right
+            });
+        case types.Expr_Type.div:
+            left = simplify(ast.left);
+            right = simplify(ast.right);
+            if (left.type == types.Expr_Type.num &&
+                right.type == types.Expr_Type.num) {
+                return num(left.data / right.data);
+            }
+            else if (right.type == types.Expr_Type.num &&
+                right.data == 1) {
+                return left;
+            }
+            return wrap_expr({
+                type: types.Expr_Type.div,
+                left: left, right: right
+            });
+        case types.Expr_Type.pow:
+            left = simplify(ast.left);
+            right = simplify(ast.right);
+            if (left.type == types.Expr_Type.num &&
+                right.type == types.Expr_Type.num) {
+                return num(Math.pow(left.data, right.data));
+            }
+            else if (right.type == types.Expr_Type.num &&
+                right.data == 1) {
+                return left;
+            }
+            return wrap_expr({
+                type: types.Expr_Type.pow,
+                left: left, right: right
+            });
+        case types.Expr_Type.call:
+            return wrap_expr({
+                type: types.Expr_Type.call,
+                name: ast.name,
+                args: ast.args.map(simplify)
+            });
+        case types.Expr_Type.expr_var:
+        case types.Expr_Type.num:
+            return wrap_expr(ast);
+    }
+}
+exports.simplify = simplify;
 function stringify(ast) {
     switch (ast.type) {
         case types.Expr_Type.add:
@@ -478,6 +585,9 @@ function stringify(ast) {
     }
 }
 exports.stringify = stringify;
+function wrap_expr(ast) {
+    return new Expr(ast);
+}
 
 },{"./types":6}],4:[function(require,module,exports){
 exports.__esModule = true;

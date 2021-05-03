@@ -213,7 +213,7 @@ let __ops = {
 	},
 	
 	"'"(st: any[]) {
-		st.push(expr.derive(st.pop()));
+		st.push(expr.simplify(expr.derive(st.pop())));
 	},
 	
 	// List indexing
