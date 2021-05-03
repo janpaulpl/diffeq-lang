@@ -1,6 +1,6 @@
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.main = f()}})(function(){var define,module,exports;return (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
 exports.__esModule = true;
-exports.__ops = exports.__num_diff = exports.__show_expr = exports.__tan = exports.__cos = exports.__sin = exports.__e = exports.__pi = exports.__enum = exports.__srange = exports.__range = exports.__times = exports.__reduce = exports.__filter = exports.__map = exports.__len = exports.__call = exports.__false = exports.__true = exports.__print = void 0;
+exports.__ops = exports.__set_zoom = exports.__set_size = exports.__num_diff = exports.__show_expr = exports.__tan = exports.__cos = exports.__sin = exports.__e = exports.__pi = exports.__enum = exports.__srange = exports.__range = exports.__times = exports.__reduce = exports.__filter = exports.__map = exports.__len = exports.__call = exports.__false = exports.__true = exports.__print = void 0;
 var utils = require("./utils");
 var expr = require("./expr");
 function __print(st, out) {
@@ -121,6 +121,15 @@ function __num_diff(st) {
     st.push((expr.eval_at(ast, x + h) - expr.eval_at(ast, x)) / h);
 }
 exports.__num_diff = __num_diff;
+function __set_size(st) {
+    window.graph_w = st.pop();
+    window.graph_h = st.pop();
+}
+exports.__set_size = __set_size;
+function __set_zoom(st) {
+    window.graph_zoom = st.pop();
+}
+exports.__set_zoom = __set_zoom;
 function eq(a, b) {
     var a_type = utils.to_type(a);
     var b_type = utils.to_type(b);
@@ -225,7 +234,8 @@ var postlude = "\n\nout = [...out, ...st];\nout;\n}";
 var builtins = [
     "print", "true", "false", "call", "len", "map", "filter", "reduce", "times", "range", "srange", "enum",
     "pi", "e", "tau",
-    "sin", "cos", "tan", "cot", "sec", "csc", "show_expr", "num_diff"
+    "sin", "cos", "tan", "cot", "sec", "csc",
+    "show_expr", "num_diff", "set_size", "set_zoom"
 ];
 function compile(ast) {
     return prelude + compile_rec(ast, 0, [], [], []) + postlude;

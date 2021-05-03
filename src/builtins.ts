@@ -122,6 +122,15 @@ function __num_diff(st: any[]) {
 	st.push((expr.eval_at(ast, x + h) - expr.eval_at(ast, x)) / h);
 }
 
+function __set_size(st: any[]) {
+	window.graph_w = st.pop();
+	window.graph_h = st.pop();
+}
+
+function __set_zoom(st: any[]) {
+	window.graph_zoom = st.pop();
+}
+
 function eq(a: any, b: any): boolean {
 	let a_type = utils.to_type(a);
 	let b_type = utils.to_type(b);
@@ -237,4 +246,4 @@ let __ops = {
 	}
 };
 
-export {__print, __true, __false, __call, __len, __map, __filter, __reduce, __times, __range, __srange, __enum, __pi, __e, __sin, __cos, __tan, __show_expr, __num_diff, __ops};
+export {__print, __true, __false, __call, __len, __map, __filter, __reduce, __times, __range, __srange, __enum, __pi, __e, __sin, __cos, __tan, __show_expr, __num_diff, __set_size, __set_zoom, __ops};
