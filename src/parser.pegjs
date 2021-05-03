@@ -146,23 +146,17 @@ Final
 Parens = "(" _ data:Terms _ ")"
 	{return data}
 
-Math_Call = Math_Call_1 / Math_Call_2 / Math_Call_3
+Math_Call = Math_Call_1 / Math_Call_2
 
 Math_Call_1 = name:Math_Fun_1 _ "(" _ arg:Terms _ ")"
 	{return {type: types.Expr_Type.call, name, args: [arg]}}
 Math_Call_2 = name:Math_Fun_2 _ "(" _ arg1:Terms _ "," _ arg2:Terms _ ")"
 	{return {type: types.Expr_Type.call, name, args: [arg1, arg2]}}
-Math_Call_3 = name:Math_Fun_3 _ "(" _ arg1:Terms _ "," _ arg2:Terms _ "," _ arg3:Terms _ ")"
-	{return {type: types.Expr_Type.call, name, args: [arg1, arg2, arg3]}}
 
 Math_Fun_1 = (
 	"abs" / "sqrt" / "cbrt" / "ln" /
-	"cosh" / "sinh" / "tanh" / "coth" / "sech" / "csch" /
-	"cos" / "sin" / "tan" / "cot" / "sec" / "csc" /
-	"arccosh" / "arcsinh" / "arctanh" / "arccoth" / "arcsech" / "arccsch" /
-	"arccos" / "arcsin" / "arctan" / "arccot" / "arcsec" / "arccsc")
+	"cos" / "sin" / "tan" / "cot" / "sec" / "csc")
 Math_Fun_2 = "root" / "log"
-Math_Fun_3 = "sum" / "prod"
 
 Math_Const = ("pi" / "π" / "tau" / "τ" / "e")
 	{return {type: types.Expr_Type.num, data: {
