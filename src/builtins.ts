@@ -1,3 +1,4 @@
+import types = require("./types");
 import utils = require("./utils");
 
 function __print(st: any[], out: any[]) {
