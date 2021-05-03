@@ -80,16 +80,3 @@ map anon n: + n 1 end [1 2 3];
 
 print "bruh" print 1;
 ```
-
-#### Calculus Sublanguage
-Acceptable inputs for plotting, derivation, and integration
-- Input hahahaha
-
-### Meat: Implementation of a GUI with all previously established features.
-- Blah Blah Blah Blah Blah
-
-### Skin and Makeup: Polishing GUI and any remaining features/tweaks.
-- Blah Blah Blah Blah Blah Blah
-
-### Raising the child: Updates and upkeep until we don't need this anymore.
-- Blah Blah Blah Blah Blah Blah Blah
