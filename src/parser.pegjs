@@ -90,50 +90,61 @@ _ = ([ \t\n\r] / Cmmnt)*
 
 Cmmnt = "#(" [^)]* ")"
 
-Expr = "{" _ eq:Eq _ "}"
-	{return {type: types.Instr_Type.expr, data: eq}}
+Expr = "{" _ terms:Terms _ "}"
+	{return {type: types.Instr_Type.expr, data: terms}}
 
-Eq = left:Terms right:(_ "=" _ Terms)? _
-	{return !right
-		? {type: types.Expr_Top_Type.single, single: left}
-		: {type: types.Expr_Top_Type.eq, left, right: right[3]}}
+Terms = prod:Prods prods:(_ [+\-] _ Terms)? _
+	{return (
+		!prods
+			? prod
+			: {
+				type: types.Expr_Type[prods[1]],
+				left: prod,
+				right: prods[3]
+			}
+	)}
 
-Terms = prod:Prods prods:(_ [+\-] _ Prods)* _
-	{return [
-		{op: types.Term_Op["+"], prod},
-		...prods.map(([, op, , prod]) => ({
-			op: op == "+" ? types.Term_Op["+"] : types.Term_Op["-"],
-			prod
-		}))
-	]}
+Prods = exp:Exps exps:(_ [*/]? _ Prods)? _
+	{return (
+		!exps
+			? exp
+			: {
+				type: exps[1] == "/" ? types.Expr_Type["/"] : types.Expr_Type["*"],
+				left: exp,
+				right: exps[3]
+			}
+	)}
 
-Prods = exp:Exps exps:(_ [*/]? _ Exps)* _
-	{return [
-		{op: types.Prod_Op["*"], exp},
-		...exps.map(([, op, , exp]) => ({
-			// No op is "*"
-			op: op == "/" ? types.Prod_Op["/"] : types.Prod_Op["*"],
-			exp
-		}))
-	]}
-
-Exps = final:Final finals:(_ "^" _ Final)* _
-	{return [
-		final, ...finals.map(([, , , final]) => final)
-	]}
+Exps = final:Final finals:(_ "^" _ Exps)? _
+	{return (
+		!finals
+			? final
+			: {
+				type: types.Expr_Type["^"],
+				left: final,
+				right: finals[3]
+			}
+	)}
 
 Final
 	= pos:"~"? val:(
 		Parens /
 		Math_Call /
 		Math_Const /
-		Main_Vars /
-		Vars /
+		Expr_Var /
 		Expr_Num)
-		{return {pos: !pos, val}}
+		{return (
+			!pos
+				? val
+				: {
+					type: types.Expr_Type["-"],
+					left: {type: types.Expr_Type.num, data: 0},
+					right: val
+				}
+		)}
 
 Parens = "(" _ data:Terms _ ")"
-	{return {type: types.Expr_Type.parens, data}}
+	{return data}
 
 Math_Call = Math_Call_1 / Math_Call_2 / Math_Call_3
 
@@ -160,11 +171,8 @@ Math_Const = ("pi" / "π" / "tau" / "τ" / "e")
 		e: Math.E
 	}[text()]}}
 
-Main_Vars = ("x" / "y")
-	{return {type: types.Expr_Type.main_var, data: text()}}
-
-Vars = [a-wz]
-	{return {type: types.Expr_Type.var, data: text()}}
+Expr_Var = "x"
+	{return {type: types.Expr_Type.expr_var}}
 
 Expr_Num = [0-9]+ ("." [0-9]+)?
 	{return {type: types.Expr_Type.num, data: parseFloat(text())}}
