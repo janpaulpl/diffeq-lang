@@ -75,12 +75,7 @@ function __srange(st) {
     var start = st.pop();
     var stop = st.pop();
     var step = st.pop();
-    if (stop - start < 0) {
-        st.push([]);
-    }
-    else {
-        st.push(Array.from(new Array(Math.ceil((stop - start) / step)), function (_, i) { return i * step + start; }));
-    }
+    st.push(Array.from(new Array(Math.ceil(Math.abs((stop - start) / step))), function (_, i) { return i * step + start; }));
 }
 exports.__srange = __srange;
 function __enum(st) {
@@ -213,6 +208,7 @@ var __ops = {
     "%": function (st) {
         st.push(st.pop() % st.pop());
     },
+    // Calculus
     "'": function (st) {
         var derivative = expr.derive(st.pop());
         console.log(expr.stringify(derivative));
@@ -220,7 +216,7 @@ var __ops = {
         console.log(expr.stringify(simplification));
         st.push(simplification);
     },
-    // List indexing
+    // List/dictionary indexing
     "@=": function (st) {
         var _a = [st.pop(), st.pop(), st.pop()], list = _a[0], idx = _a[1], val = _a[2];
         list[idx] = val;

@@ -6,8 +6,9 @@ enum Instr_Type {
 enum Op {
 	"==", "!=", "<=", ">=", "<", ">", // Comparison
 	"+", "~", "-", "*", "/", // Arithmetic
-	"^", "%%", "%", "'", // Extra math
-	"@=", "@", // List indexing
+	"^", "%%", "%", // Extra math
+	"'", // Calculus
+	"@=", "@", // List/dictionary indexing
 	"&", "|", "!", // Boolean
 	"??", "?" // Special interaction
 }

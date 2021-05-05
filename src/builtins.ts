@@ -73,14 +73,10 @@ function __srange(st: any[]) {
 	let start = st.pop();
 	let stop = st.pop();
 	let step = st.pop();
-	if(stop - start < 0) {
-		st.push([]);
-	} else {
-		st.push(Array.from(
-			new Array(Math.ceil((stop - start) / step)),
-			(_, i) => i * step + start)
-		);
-	}
+	st.push(Array.from(
+		new Array(Math.ceil(Math.abs((stop - start) / step))),
+		(_, i) => i * step + start)
+	);
 }
 
 function __enum(st: any[]) {
@@ -235,6 +231,8 @@ let __ops = {
 		st.push(st.pop() % st.pop());
 	},
 	
+	// Calculus
+	
 	"'"(st: any[]) {
 		let derivative: types.Expr = expr.derive(st.pop());
 		console.log(expr.stringify(derivative));
@@ -243,7 +241,7 @@ let __ops = {
 		st.push(simplification);
 	},
 	
-	// List indexing
+	// List/dictionary indexing
 	
 	"@="(st: any[]) {
 		let [list, idx, val] = [st.pop(), st.pop(), st.pop()];
@@ -270,6 +268,7 @@ let __ops = {
 	},
 	
 	// Special interaction
+	
 	"?"(st: any[]) {
 		st.push(window.res_hist[window.res_hist.length - 1]);
 	},
