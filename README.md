@@ -1,9 +1,9 @@
 # MathInv-2021: Domain Specific Language for differential equations with Scott-Strachey semantics
 Repo for MathInv /w [Camto](https://github.com/Camto)
 
-## The Language
+# The Language
 
-Diffeq uses Polish notation, so every operator and function call is simply placed in front of its arguments:
+The language uses Polish notation, so every operator and function call is simply placed in front of its arguments:
 
 ```
  print + 1 2;
@@ -20,7 +20,7 @@ As you can see in the example above, semicolons separate statements. But the las
 
 Use the "Get" button next to the result after running the previous program to reuse it. It will insert a `??n` with some number representing the result as a value.
 
-### Comments
+## Comments
 
 Comments are made with `#( comment )`
 
@@ -29,7 +29,7 @@ Comments are made with `#( comment )`
  + ??0 1
 ```
 
-### Variables
+## Variables
 
 Variables can be declared locally with `:=`, and modified/declared globally with `=`
 
@@ -43,7 +43,7 @@ Variables can be declared locally with `:=`, and modified/declared globally with
 
 Those will share `a`
 
-### Control Structures
+## Control Structures
 
 The normal control structures can be used, such as `if`/`elif`/`else`, `for`, and `while`:
 
@@ -112,7 +112,7 @@ With all of this shown off, here is FizzBuzz, using the result from the `if`/`el
 ```
 
 
-### Defining Functions
+## Defining Functions
 
 Functions are made with the `fun` keyword, and return implicitly:
 
@@ -140,7 +140,7 @@ Here's the classic fibonacci function defined recursively:
      print fib n
 ```
 
-### Data Types
+## Data Types
 
 The language has
 - Numbers, with no distinction between integers and real numbers, as in JavaScript
@@ -163,9 +163,9 @@ The language has
   - `` `increment``
   - `anon x: + x 1 end`
 
-### Operators
+## Operators
 
-#### Comparison
+### Comparison
 
 - `== a b` checks for equality between any two types but expressions.
 - `!= a b` checks for inequality in the same way.
@@ -174,7 +174,7 @@ The language has
 - `< n m` checks if a number is less than another.
 - `> n m` checks if a number is more than another.
 
-#### Arithmetic
+### Arithmetic
 
 - `+ n m` adds two numbers or strings.
 - `~ n` negates a number.
@@ -182,35 +182,35 @@ The language has
 - `* n m` multiplies two numbers.
 - `/ n m` divides a number by another.
 
-#### Extra math
+### Extra math
 
 - `^ n m` exponentiates a number by another.
 - `%% n m` checks if a number can be divided by another.
 - `% n m` returns the modulo of a number being divided by another.
 
-#### Calculus
+### Calculus
 
 - `' expr` derives a mathematical expression.
 
-#### List/dictionary indexing
+### List/dictionary indexing
 
 - `@= list idx val` takes 3 arguments, the list/dictionary, the index/key, and the new value. It then updates the list/dictionary at that index/key putting the value.
 - `@ list idx` takes 2 arguments, the list/dictionary and the index/key. It then returns the value at that index/key.
 
-#### Boolean
+### Boolean
 
 - `& n m` ands two booleans.
 - `| n m` ors two booleans.
 - `! n` nots a boolean.
 
-#### Special interaction
+### Special interaction
 
 - `?` gets the last result from the console.
 - `?? idx` gets the result from the console at that index, where the very first result is at the index `0`.
 
-### Built-in functions
+## Built-in functions
 
-#### Basic
+### Basic
 
 - `print thing` simply prints out a result, keeping its type if it's fetched later.
 - `call fun a b c...` calls a function with the other arguments.
@@ -222,7 +222,7 @@ The language has
      print call `add 3 4
     ```
 
-#### Lists
+### Lists
 
 - `len list` gets the length of a list.
 - `map fun list` makes a new list by calling a function on all of a list's items.
@@ -257,7 +257,7 @@ The language has
     ```
 - `enum list` gives the list of indexes for that list.
 
-#### Mathematics
+### Mathematics
 
 - `pi` returns the constant pi.
 - `tau` returns the constant tau.
@@ -269,18 +269,18 @@ The language has
 - `sec n` calculates the secant of a number.
 - `csc n` calculates the cosecant of a number.
 
-#### Mathematical Expressions
+### Mathematical Expressions
 
 - `show_expr expr` shows the string version of a mathematical expression value.
 - `eval expr x` evaluates a mathematical expression at a given value for `x`.
 - `num_diff expr x` evaluates the numeric differential of a mathematical expression at a given value for `x`.
 
-#### Settings
+### Settings
 
 - `set_size width height` sets the size of the expression grapher to the given width and height.
 - `set_zoom zoom` sets the zoom of the expression grapher to a number.
 
-### Everything Allowed in the Mathematical Expressions
+## Everything Allowed in the Mathematical Expressions
 
 - Numbers, including `pi`/`π`, `tau`/`τ`, and `e`
 - The operators `+` `-` `*` `/` `^` all in infix form (so `1 + 2` instead of `+ 1 2` like the rest of the language)
@@ -301,58 +301,3 @@ The language has
   - `log(b, x)` log base `b` of `x`
 
 Not everything can be symbolically derived yet, though.
-
-## About
-Fancy website lets you go wooooo with differentials.
-
-#### Syntax
-
-Polish Notation
-
-```
-if == x y:
-	print "same";
-	+ 2 3
-else
-	print "diff";
-	+ 1 2
-end;
-
-if a:
-	1
-elif b:
-	2
-else
-	3
-end;
-
-if a:
-	1
-elif b:
-	2
-end;
-
-+ 1 2;
-
-for x [2 3]: print x end;
-
-x = 3;
-y'' = [2 3 4];
-
-fun fib n a b: if == n 0: a else fib  - n 1  b  + a b end end;
-
-call;
-print + 1 1  4;
-
-+ 1 1;
-print ?? 4;
-
-map `inc [1 2 3];
-map anon n: + n 1 end [1 2 3];
-
-+ "x \"+ 1" "x^2";
-
-#[:key "val\n\[ue" :a 4];
-
-print "bruh" print 1;
-```
