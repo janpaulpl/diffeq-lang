@@ -245,8 +245,14 @@ let __ops = {
 	
 	// List indexing
 	
+	"@="(st: any[]) {
+		let [list, idx, val] = [st.pop(), st.pop(), st.pop()];
+		list[idx] = val;
+	},
+	
 	"@"(st: any[]) {
-		st.push(st.pop()[st.pop()]);
+		let [list, idx] = [st.pop(), st.pop()];
+		st.push(list[idx]);
 	},
 	
 	// Boolean

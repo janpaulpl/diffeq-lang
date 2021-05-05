@@ -7,7 +7,7 @@ enum Op {
 	"==", "!=", "<=", ">=", "<", ">", // Comparison
 	"+", "~", "-", "*", "/", // Arithmetic
 	"^", "%%", "%", "'", // Extra math
-	"@", // List indexing
+	"@=", "@", // List indexing
 	"&", "|", "!", // Boolean
 	"??", "?" // Special interaction
 }
