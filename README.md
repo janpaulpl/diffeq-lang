@@ -1,5 +1,7 @@
-# MathInv-2021: Domain Specific Language for differential equations with Scott-Strachey semantics
-Repo for MathInv /w [Camto](https://github.com/Camto)
+# Domain Specific Language for differential equations
+# Creators: [Camto](https://github.com/Camto) & [jpVinnie](github.com/jpVinnie)
+#### This project gave us the opportunity to be ISEF Finalists in 2021, [Check out our project board!](https://projectboard.world/isef/project/isef-booth-id-project-title-jylnp) 
+#### This repo focuses on the language itself, albeit if you are interested in the math, a [folder](https://github.com/jpVinnie/diffeq-lang/blob/master/paper/Full%20Investigation.pdf) with our official research paper can be accessed here as well.
 
 # The Language
 
