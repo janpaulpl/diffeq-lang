@@ -23,6 +23,14 @@ p {
 	margin-left: 0px;
 }
 
+a {
+	color: rgb(0, 0, 238);
+}
+
+a:visited {
+	color: rgb(85, 26, 139);
+}
+
 .indented {
 	margin-left: 32px;
 }
