@@ -6,8 +6,9 @@ enum Instr_Type {
 enum Op {
 	"==", "!=", "<=", ">=", "<", ">", // Comparison
 	"+", "~", "-", "*", "/", // Arithmetic
-	"^", "%%", "%", "'", // Extra math
-	"@", // List indexing
+	"^", "%%", "%", // Extra math
+	"'", // Calculus
+	"@=", "@", // List/dictionary indexing
 	"&", "|", "!", // Boolean
 	"??", "?" // Special interaction
 }
@@ -55,6 +56,9 @@ declare global {
 		vars: {[name: string]: any};
 		funs: {[name: string]: (st: any[], out: any[]) => void};
 		res_hist: any[];
+		graph_w: number;
+		graph_h: number;
+		graph_zoom: number;
 	}
 }
 

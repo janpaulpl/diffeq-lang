@@ -73,14 +73,10 @@ function __srange(st: any[]) {
 	let start = st.pop();
 	let stop = st.pop();
 	let step = st.pop();
-	if(stop - start < 0) {
-		st.push([]);
-	} else {
-		st.push(Array.from(
-			new Array(Math.ceil((stop - start) / step)),
-			(_, i) => i * step + start)
-		);
-	}
+	st.push(Array.from(
+		new Array(Math.ceil(Math.abs((stop - start) / step))),
+		(_, i) => i * step + start)
+	);
 }
 
 function __enum(st: any[]) {
@@ -91,6 +87,10 @@ function __enum(st: any[]) {
 
 function __pi(st: any[]) {
 	st.push(Math.PI);
+}
+
+function __tau(st: any[]) {
+	st.push(2 * Math.PI);
 }
 
 function __e(st: any[]) {
@@ -109,13 +109,45 @@ function __tan(st: any[]) {
 	st.push(Math.tan(st.pop()));
 }
 
+function __cot(st: any[]) {
+	st.push(1 / Math.tan(st.pop()));
+}
+
+function __sec(st: any[]) {
+	st.push(1 / Math.cos(st.pop()));
+}
+
+function __csc(st: any[]) {
+	st.push(1 / Math.sin(st.pop()));
+}
+
+function __show_expr(st: any[]) {
+	st.push(`{${expr.stringify(st.pop())}}`);
+}
+
+function __eval(st: any[]) {
+	let ast = st.pop();
+	let x = st.pop();
+	
+	st.push(expr.eval_at(ast, x));
+}
+
 function __num_diff(st: any[]) {
 	let ast = st.pop();
 	let x = st.pop();
-	let h = 0.0000009;
+	let h = 1e-10;
 	
 	// Ratio of difference
 	st.push((expr.eval_at(ast, x + h) - expr.eval_at(ast, x)) / h);
+}
+
+function __set_size(st: any[]) {
+	window.graph_w = st.pop();
+	window.graph_h = st.pop();
+}
+
+function __set_zoom(st: any[]) {
+	window.graph_zoom = st.pop();
 }
 
 function eq(a: any, b: any): boolean {
@@ -199,14 +231,26 @@ let __ops = {
 		st.push(st.pop() % st.pop());
 	},
 	
+	// Calculus
+	
 	"'"(st: any[]) {
-		st.push(expr.derive(st.pop()));
+		let derivative: types.Expr = expr.derive(st.pop());
+		console.log(expr.stringify(derivative));
+		let simplification: types.Expr = expr.simplify(derivative);
+		console.log(expr.stringify(simplification));
+		st.push(simplification);
 	},
 	
-	// List indexing
+	// List/dictionary indexing
+	
+	"@="(st: any[]) {
+		let [list, idx, val] = [st.pop(), st.pop(), st.pop()];
+		list[idx] = val;
+	},
 	
 	"@"(st: any[]) {
-		st.push(st.pop()[st.pop()]);
+		let [list, idx] = [st.pop(), st.pop()];
+		st.push(list[idx]);
 	},
 	
 	// Boolean
@@ -224,6 +268,7 @@ let __ops = {
 	},
 	
 	// Special interaction
+	
 	"?"(st: any[]) {
 		st.push(window.res_hist[window.res_hist.length - 1]);
 	},
@@ -233,4 +278,4 @@ let __ops = {
 	}
 };
 
-export {__print, __true, __false, __call, __len, __map, __filter, __reduce, __times, __range, __srange, __enum, __pi, __e, __sin, __cos, __tan, __num_diff, __ops};
+export {__print, __true, __false, __call, __len, __map, __filter, __reduce, __times, __range, __srange, __enum, __pi, __tau, __e, __sin, __cos, __tan, __cot, __sec, __csc, __show_expr, __eval, __num_diff, __set_size, __set_zoom, __ops};

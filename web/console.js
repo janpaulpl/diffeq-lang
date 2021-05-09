@@ -5,6 +5,9 @@ let travel = 1;
 window.vars = {};
 window.funs = {};
 window.res_hist = [];
+window.graph_w = 400;
+window.graph_h = 400;
+window.graph_zoom = 40;
 let res_cou = 0;
 
 $(function() {
@@ -29,6 +32,28 @@ $(function() {
 					${format(result)}
 				`);
 				$("#log").scrollTop($("#log")[0].scrollHeight);
+				
+				for(let graph of document.querySelectorAll("canvas[render]")) {
+					let ast = JSON.parse(graph.getAttribute("render"));
+					graph.removeAttribute("render");
+					
+					let ctx = graph.getContext("2d");
+					
+					ctx.setLineDash([5, 5]);
+					ctx.strokeStyle = "blue";
+					
+					ctx.beginPath();
+					ctx.moveTo(graph_w / 2, 0);
+					ctx.lineTo(graph_w / 2, graph_h);
+					ctx.moveTo(0, graph_h / 2);
+					ctx.lineTo(graph_w, graph_h / 2);
+					ctx.stroke();
+					
+					for(let i = 0; i < graph_w; i += 2) {
+						ctx.fillRect(i, graph_h / 2 - main.eval_at(ast, (i - graph_w / 2) / graph_zoom) * graph_zoom, 2, 2);
+					}
+				}
+				
 				break;
 			case 38:
 				travel--;
@@ -77,11 +102,19 @@ function format(out) {
 		res_hist.push(out);
 	}
 	
-	str += out.map(o => `<p class="indented">${stringify(o)} <button onclick="$('#code-box').val($('#code-box').val() + '??' + (${res_cou++}).toString())">Get</button> </p>`).join("");
+	str += out.map(obj_to_elem).join("");
 	for(let obj of out)
 		res_hist.push(obj);
 	
 	return str;
+}
+
+function obj_to_elem(obj) {
+	if(!(obj instanceof main.Expr)) {
+		return `<p class="indented">${stringify(obj)} <button onclick="$('#code-box').val($('#code-box').val() + '??' + (${res_cou++}).toString())">Get</button> </p>`;
+	} else {
+		return `<p class="indented"><canvas width=${graph_w} height=${graph_h} render='${JSON.stringify(obj)}'></canvas> ${graph_w}x${graph_h}, magnified ${graph_zoom}x <button onclick="$('#code-box').val($('#code-box').val() + '??' + (${res_cou++}).toString())">Get</button> </p>`;
+	}
 }
 
 function stringify(obj) {
@@ -90,6 +123,8 @@ function stringify(obj) {
 		return obj.toString();
 	} else if(obj_type == "array") {
 		return `[${obj.map(stringify).join(" ")}]`;
+	} else if(obj instanceof main.Expr) {
+		return `{${main.stringify_expr(obj)}}`;
 	} else if(obj_type == "object") {
 		return `#[${Object.entries(obj).map(([key, val]) => `:${key} ${stringify(val)}`).join(" ")}]`;
 	}
